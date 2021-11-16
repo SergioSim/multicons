@@ -1,5 +1,10 @@
 """Utility functions"""
 
+import os
+import subprocess  # nosec
+from pathlib import Path
+from tempfile import NamedTemporaryFile, TemporaryDirectory
+
 import numpy as np
 import pandas as pd
 from sklearn.metrics import jaccard_score
@@ -40,3 +45,39 @@ def in_ensemble_similarity(base_clusterings: list[np.ndarray]) -> float:
         average_similarity[i] = similarity.iloc[i].sum() / (count - 1)
     average_similarity[count - 1] = similarity.iloc[count - 1].sum() / (count - 1)
     return np.mean(average_similarity)
+
+
+def read_all_lines_from_directory(directory):
+    """Yields all lines from all files present in directory."""
+
+    for path in Path(directory).iterdir():
+        with path.open(mode="r") as file:
+            for line in file:
+                yield line
+
+
+def linear_closed_itemsets_miner(membership_matrix: pd.DataFrame):
+    """Returns a list of frequent closed itemsets using the LCM algorithm."""
+
+    # Thanks to https://github.com/slide-lig/plcmpp for the implementation
+    # of the LCM algorithm! It's cloned and build in the ./src/plcmpp directory.
+    path = None
+    groups = list(range(0, len(membership_matrix.columns)))
+    with NamedTemporaryFile(mode="w", delete=False) as file:
+        path = file.name
+        for i in range(0, len(membership_matrix)):
+            transaction = (membership_matrix.iloc[i, :] * groups)[
+                membership_matrix.iloc[i, :].astype(bool)
+            ]
+            file.write(" ".join(transaction.astype(str)) + "\n")
+    frequent_closed_itemsets = []
+    with TemporaryDirectory() as temp_dir:
+        plcmpp = __file__.replace("utils.py", "") + "../plcmpp/src/pLCM++"
+        subprocess.run([plcmpp, path, "0", "."], cwd=temp_dir, check=True)  # nosec
+        for line in read_all_lines_from_directory(temp_dir):
+            itemset = np.array(line.split("\t")[1].split(" ")).astype(int)
+            itemset.sort()
+            frequent_closed_itemsets.append(list(membership_matrix.columns[itemset]))
+    os.unlink(path)
+    frequent_closed_itemsets.sort(key=lambda x: (len(x), x), reverse=True)
+    return frequent_closed_itemsets
