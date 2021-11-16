@@ -4,12 +4,14 @@ DOCKER_UID           = $(shell id -u)
 DOCKER_GID           = $(shell id -g)
 DOCKER_USER          = $(DOCKER_UID):$(DOCKER_GID)
 COMPOSE              = DOCKER_USER=$(DOCKER_USER) docker-compose
-COMPOSE_RUN_APP      = $(COMPOSE) run --rm app
+COMPOSE_RUN          = $(COMPOSE) run --rm
+COMPOSE_RUN_APP      = $(COMPOSE_RUN) app
 
 default: help
 
 build: ## build the docker container
 	@$(COMPOSE) build
+	@$(COMPOSE_RUN) --workdir=/app/src/plcmpp/src app make TCMALLOC=NONE LDLIBS="-lrt -l:libtcmalloc_minimal.so.4"
 .PHONY: build
 
 down: ## stop and remove the docker container
@@ -17,7 +19,7 @@ down: ## stop and remove the docker container
 .PHONY: down
 
 test: ## run tests
-	bin/pytest
+	bin/pytest -vv
 .PHONY: test
 
 # Nota bene: Black should come after isort just in case they don't agree...
