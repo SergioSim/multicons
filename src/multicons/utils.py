@@ -1,12 +1,8 @@
 """Utility functions"""
 
-import os
-import subprocess  # nosec
-from pathlib import Path
-from tempfile import NamedTemporaryFile, TemporaryDirectory
-
 import numpy as np
 import pandas as pd
+from fim import eclat  # pylint: disable=no-name-in-module
 from sklearn.metrics import jaccard_score
 
 
@@ -16,13 +12,10 @@ def build_membership_matrix(base_clusterings: list[np.ndarray]) -> pd.DataFrame:
     if not base_clusterings or not isinstance(base_clusterings[0], np.ndarray):
         raise IndexError("base_clusterings should contain at least one np.ndarray.")
 
-    index = np.arange(0, base_clusterings[0].size)
-    membership_matrix = pd.DataFrame(index=index)
-    for i, clusters in enumerate(base_clusterings):
-        columns = [f"{i}P{partition}" for partition in np.unique(clusters)]
-        values = np.eye(len(columns), dtype=int)[clusters]
-        membership_matrix[columns] = pd.DataFrame(values, index=index)
-    return membership_matrix
+    res = []
+    for clusters in base_clusterings:
+        res += [clusters == x for x in np.unique(clusters)]
+    return pd.DataFrame(np.transpose(res), dtype=int)
 
 
 def in_ensemble_similarity(base_clusterings: list[np.ndarray]) -> float:
@@ -47,37 +40,156 @@ def in_ensemble_similarity(base_clusterings: list[np.ndarray]) -> float:
     return np.mean(average_similarity)
 
 
-def read_all_lines_from_directory(directory):
-    """Yields all lines from all files present in directory."""
-
-    for path in Path(directory).iterdir():
-        with path.open(mode="r") as file:
-            for line in file:
-                yield line
-
-
 def linear_closed_itemsets_miner(membership_matrix: pd.DataFrame):
-    """Returns a list of frequent closed itemsets using the LCM algorithm."""
+    """Returns a list of frequent closed itemsets using the lcm algorithm."""
 
-    # Thanks to https://github.com/slide-lig/plcmpp for the implementation
-    # of the LCM algorithm! It's cloned and build in the ./src/plcmpp directory.
-    path = None
-    groups = list(range(0, len(membership_matrix.columns)))
-    with NamedTemporaryFile(mode="w", delete=False) as file:
-        path = file.name
-        for i in range(0, len(membership_matrix)):
-            transaction = (membership_matrix.iloc[i, :] * groups)[
-                membership_matrix.iloc[i, :].astype(bool)
-            ]
-            file.write(" ".join(transaction.astype(str)) + "\n")
-    frequent_closed_itemsets = []
-    with TemporaryDirectory() as temp_dir:
-        plcmpp = __file__.replace("utils.py", "") + "../plcmpp/src/pLCM++"
-        subprocess.run([plcmpp, path, "0", "."], cwd=temp_dir, check=True)  # nosec
-        for line in read_all_lines_from_directory(temp_dir):
-            itemset = np.array(line.split("\t")[1].split(" ")).astype(int)
-            itemset.sort()
-            frequent_closed_itemsets.append(list(membership_matrix.columns[itemset]))
-    os.unlink(path)
-    frequent_closed_itemsets.sort(key=lambda x: (len(x), x), reverse=True)
-    return frequent_closed_itemsets
+    transactions = []
+    for i in membership_matrix.index:
+        transactions.append(np.nonzero(membership_matrix.iloc[i].values)[0].tolist())
+    frequent_closed_itemsets = eclat(transactions, target="c", supp=0, algo="o", conf=0)
+    return sorted(map(lambda x: frozenset(x[0]), frequent_closed_itemsets), key=len)
+
+
+def assign_labels(bi_clust: list[np.ndarray], membership_matrix: pd.DataFrame):
+    """Returns a consensus vector with labels for each instance set in bi_clust."""
+
+    result = np.zeros(len(membership_matrix), dtype=int)
+    for i, itemset in enumerate(bi_clust):
+        result[list(itemset)] = i
+    return result
+
+
+def consensus_function_10(bi_clust: list[np.ndarray]):
+    """Returns a modified bi_clust (set of unique instance sets)."""
+
+    all_bi_clust_sets_unique = False
+    while not all_bi_clust_sets_unique:
+        all_bi_clust_sets_unique = True
+        i = 0
+        count = len(bi_clust)
+        while i < count:
+            bi_clust_i = bi_clust[i]
+            j = i + 1
+            while j < count:
+                bi_clust_j = bi_clust[j]
+                intersection_size = len(bi_clust_i.intersection(bi_clust_j))
+                if intersection_size == 0:
+                    j += 1
+                elif intersection_size == len(bi_clust_i):
+                    # Bi⊂Bj
+                    all_bi_clust_sets_unique = False
+                    del bi_clust[i]
+                    count -= 1
+                elif intersection_size == len(bi_clust_i):
+                    # Bj⊂Bi
+                    all_bi_clust_sets_unique = False
+                    del bi_clust[j]
+                    count -= 1
+                else:
+                    bi_clust[j] = bi_clust_i.union(bi_clust_j)
+                    all_bi_clust_sets_unique = False
+                    del bi_clust[i]
+                    count -= 1
+            i += 1
+
+
+def build_bi_clust(
+    membership_matrix: pd.DataFrame,
+    frequent_closed_itemsets: list[frozenset],
+    size: int,
+):
+    """Returns a new list of instances from itemsets of given size."""
+
+    itemsets = list(filter(lambda x: len(x) == size, frequent_closed_itemsets))
+    result = []
+    for itemset in itemsets:
+        consensus = np.ones(len(membership_matrix), dtype=bool)
+        for partition in itemset:
+            consensus = consensus & membership_matrix[partition]
+        result.append(set(consensus[consensus].index.values))
+    return result
+
+
+def multicons(base_clusterings):
+    """Returns a dictionary with a list of consensus clustering vectors."""
+
+    # 2 Calculate in-ensemble similarity
+    # similarity = in_ensemble_similarity(base_clusterings)
+    # 3 Build the cluster membership matrix M
+    membership_matrix = build_membership_matrix(base_clusterings)
+    # 4 Generate FCPs from M for minsupport = 0
+    # 5 Sort the FCPs in DESCENDING order according to the size of the instance sets
+    frequent_closed_itemsets = linear_closed_itemsets_miner(membership_matrix)
+    # 6 MaxDT ← length(BaseClusterings)
+    max_d_t = len(base_clusterings)
+    # 7 BiClust ← {instance sets of FCPs built from MaxDT base clusters}
+    bi_clust = build_bi_clust(membership_matrix, frequent_closed_itemsets, max_d_t)
+    # 8 Assign a label to each set in BiClust to build the first consensus vector
+    #   and store it in a list of vectors ConsVctrs
+    consensus_vectors = [0] * max_d_t
+    consensus_vectors[max_d_t - 1] = assign_labels(bi_clust, membership_matrix)
+
+    # 9 Build the remaining consensuses
+    # 10 for DT = (MaxDT−1) to 1 do
+    for d_t in range(max_d_t - 1, 0, -1):
+        # 11 BiClust ← BiClust ∪ {instance sets of FCPs built from DT base clusters}
+        bi_clust += build_bi_clust(membership_matrix, frequent_closed_itemsets, d_t)
+        # 12 Call the consensus function (Algo. 10)
+        consensus_function_10(bi_clust)
+        # 13 Assign a label to each set in BiClust to build a consensus vector
+        #    and add it to ConsVctrs
+        consensus_vectors[d_t - 1] = assign_labels(bi_clust, membership_matrix)
+    # 14 end
+
+    # 15 Remove similar consensuses
+    # 16 ST ← Vector of ‘1’s of length MaxDT
+    stability = [1] * max_d_t
+    # 17 for i = MaxDT to 2 do
+    i = max_d_t - 1
+    while i > 0:
+        # 18 Vi ← ith consensus in ConsVctrs
+        consensus_i = consensus_vectors[i]
+        # 19 for j = (i−1) to 1 do
+        j = i - 1
+        while j >= 0:
+            # 20 Vj ← jth consensus in ConsVctrs
+            consensus_j = consensus_vectors[j]
+            # 21 if Jaccard(Vi , Vj ) = 1 then
+            if jaccard_score(consensus_i, consensus_j, average="weighted") == 1:
+                # 22 ST [i] ← ST [i] + 1
+                stability[i] += 1
+                # 23 Remove ST [j]
+                del stability[j]
+                # 24 Remove Vj from ConsVctrs
+                del consensus_vectors[j]
+                i -= 1
+            j -= 1
+        i -= 1
+        # 25 end
+    # 26 end
+
+    # 27 Find the consensus the most similar to the ensemble
+    # 28 L ← length(ConsVctrs)
+    consensus_count = len(consensus_vectors)
+    # 29 TSim ← Vector of ‘0’s of length L
+    t_sim = np.zeros(consensus_count)
+    # 30 for i = 1 to L do
+    for i in range(0, consensus_count):
+        # 31 Ci ← ith consensus in ConsVctrs
+        consensus_i = consensus_vectors[i]
+        # 32 for j = 1 to MaxDT do
+        for j in range(max_d_t):
+            # 33 Cj ← jth clustering in BaseClusterings
+            consensus_j = base_clusterings[j]
+            # 34 TSim[i] ← TSim[i] + Jaccard(Ci,Cj)
+            t_sim[i] += jaccard_score(consensus_i, consensus_j, average="weighted")
+        # 35 end
+        # 36 Sim[i] ← TSim[i] / MaxDT
+        t_sim[i] /= max_d_t
+    # 37 end
+    recommended = np.where(t_sim == np.amax(t_sim))[0][0]
+    return {
+        "recommended": recommended,
+        "consensus_vectors": consensus_vectors,
+        "t_sim": t_sim,
+    }
