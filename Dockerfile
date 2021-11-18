@@ -5,7 +5,7 @@ RUN pip install --upgrade pip
 
 RUN apt-get update && \
     apt-get -y upgrade && \
-    apt-get install -y libtcmalloc-minimal4 libnuma-dev build-essential && \
+    apt-get install -y gcc python3-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # -- Development --

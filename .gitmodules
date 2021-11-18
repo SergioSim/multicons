@@ -1,3 +1,0 @@
-[submodule "src/plcmpp"]
-	path = src/plcmpp
-	url = https://github.com/slide-lig/plcmpp.git

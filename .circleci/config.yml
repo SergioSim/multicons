@@ -74,22 +74,18 @@ jobs:
 
   # Run tests
   test:
-    machine:
-      image: ubuntu-2004:202104-01
-      # Prevent cache-related issues
-      docker_layer_caching: false
+    docker:
+      - image: cimg/python:3.10.0
     working_directory: ~/multicons
     steps:
       # Checkout repository sources
       - checkout
-      - run: git submodule sync
-      - run: git submodule update --init
-      - run:
-          name: Build development image
-          command: make build
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ .Revision }}
       - run:
           name: "Run tests"
-          command: make test
+          command: ~/.local/bin/pytest
 
 workflows:
   multicons:
@@ -102,11 +98,13 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - test:
+      - lint:
+          requires:
+            - build
           filters:
             tags:
               only: /.*/
-      - lint:
+      - test:
           requires:
             - build
           filters:

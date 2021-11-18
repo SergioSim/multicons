@@ -11,7 +11,6 @@ default: help
 
 build: ## build the docker container
 	@$(COMPOSE) build
-	@$(COMPOSE_RUN) --workdir=/app/src/plcmpp/src app make TCMALLOC=NONE LDLIBS="-lrt -l:libtcmalloc_minimal.so.4"
 .PHONY: build
 
 down: ## stop and remove the docker container

@@ -1,7 +1,5 @@
 """Tests for utility functions"""
 
-from subprocess import CalledProcessError
-
 import numpy as np
 import pandas as pd
 import pytest
@@ -10,6 +8,7 @@ from multicons import (
     build_membership_matrix,
     in_ensemble_similarity,
     linear_closed_itemsets_miner,
+    multicons,
 )
 
 
@@ -24,7 +23,31 @@ def test_build_membership_matrix():
             [0, 1, 1, 0, 0, 1, 0],
             [0, 1, 1, 0, 0, 0, 1],
         ],
-        columns=["0P0", "0P1", "1P0", "1P1", "2P0", "2P1", "2P2"],
+        columns=list(range(7)),
+    )
+    pd.testing.assert_frame_equal(value, expected)
+
+    base_clusterings = [
+        np.array([0, 0, 0, 1, 1, 1, 1, 1, 1]),
+        np.array([0, 0, 0, 1, 1, 1, 1, 1, 1]),
+        np.array([0, 0, 0, 0, 0, 1, 1, 2, 2]),
+        np.array([1, 1, 1, 0, 0, 0, 0, 2, 2]),
+        np.array([1, 1, 1, 0, 0, 0, 0, 2, 2]),
+    ]
+    value = build_membership_matrix(base_clusterings)
+    expected = pd.DataFrame(
+        [
+            [1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0],
+            [1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0],
+            [1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0],
+            [0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0],
+            [0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0],
+            [0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0],
+            [0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0],
+            [0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+            [0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+        ],
+        columns=list(range(13)),
     )
     pd.testing.assert_frame_equal(value, expected)
 
@@ -65,13 +88,13 @@ def test_linear_closed_itemsets_miner():
         ],
         columns=["0P0", "0P1", "1P0", "1P1", "2P0", "2P1", "2P2"],
     )
-    expected = [
-        ["0P1", "1P0", "2P2"],
-        ["0P1", "1P0", "2P1"],
-        ["0P0", "1P1", "2P0"],
-        ["0P1", "1P0"],
-    ]
-    assert linear_closed_itemsets_miner(membership_matrix) == expected
+    expected = {
+        frozenset([1, 2]),
+        frozenset([0, 3, 4]),
+        frozenset([1, 2, 5]),
+        frozenset([1, 2, 6]),
+    }
+    assert set(linear_closed_itemsets_miner(membership_matrix)) == expected
 
     membership_matrix = pd.DataFrame(
         [
@@ -85,38 +108,40 @@ def test_linear_closed_itemsets_miner():
             [0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
             [0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
         ],
-        columns=[
-            "1P1",
-            "1P2",
-            "2P1",
-            "2P2",
-            "3P1",
-            "3P2",
-            "3P3",
-            "4P1",
-            "4P2",
-            "4P3",
-            "5P1",
-            "5P2",
-            "5P3",
-        ],
+        columns=list(range(13)),
     )
     expected = [
-        ["1P2", "2P2", "3P3", "4P3", "5P3"],
-        ["1P2", "2P2", "3P2", "4P1", "5P1"],
-        ["1P2", "2P2", "3P1", "4P1", "5P1"],
-        ["1P1", "2P1", "3P1", "4P2", "5P2"],
-        ["1P2", "2P2", "4P1", "5P1"],
-        ["1P2", "2P2"],
-        ["3P1"],
+        frozenset([4]),
+        frozenset([1, 3]),
+        frozenset([1, 3, 7, 10]),
+        frozenset([1, 3, 4, 7, 10]),
+        frozenset([0, 2, 4, 8, 11]),
+        frozenset([1, 3, 5, 7, 10]),
+        frozenset([1, 3, 6, 9, 12]),
     ]
     assert linear_closed_itemsets_miner(membership_matrix) == expected
 
 
-def test_linear_closed_itemsets_miner_with_invalid_input():
-    """Tests the in_ensemble_similarity raises an error on invalid input."""
+def test_multicons():
+    """Tests the multicons function."""
 
-    invalid = pd.DataFrame(["test", "124", "hello"])
-    error = "Command '.*' died with <Signals.SIGILL: 4>"
-    with pytest.raises(CalledProcessError, match=error):
-        linear_closed_itemsets_miner(invalid)
+    base_clusterings = [
+        np.array([0, 0, 0, 1, 1, 1, 1, 1, 1]),
+        np.array([0, 0, 0, 1, 1, 1, 1, 1, 1]),
+        np.array([0, 0, 0, 0, 0, 1, 1, 2, 2]),
+        np.array([1, 1, 1, 0, 0, 0, 0, 2, 2]),
+        np.array([1, 1, 1, 0, 0, 0, 0, 2, 2]),
+    ]
+    value = multicons(base_clusterings)
+    expected_consensus = np.array(
+        [
+            np.array([0, 0, 0, 0, 0, 0, 0, 0, 0]),
+            np.array([0, 0, 0, 1, 1, 1, 1, 1, 1]),
+            np.array([0, 0, 0, 2, 2, 2, 2, 1, 1]),
+            np.array([1, 1, 1, 0, 0, 2, 2, 3, 3]),
+        ]
+    )
+    expected_similarity = np.array([0.42222222, 0.48444444, 0.20296296, 0.19555556])
+    assert value["recommended"] == 1
+    np.testing.assert_array_equal(value["consensus_vectors"], expected_consensus)
+    assert (np.absolute(value["t_sim"] - expected_similarity) < 0.0000001).all()
