@@ -64,15 +64,17 @@ def test_build_membership_matrix_with_invalid_input(invalid):
 def test_in_ensemble_similarity():
     """Tests the in_ensemble_similarity should return the expected result."""
 
-    base_clusterings = [np.array([0, 1, 1]), np.array([1, 0, 0]), np.array([0, 1, 2])]
-    assert in_ensemble_similarity(base_clusterings) == 2 / 3
+    base_clusterings = [np.array([0, 1, 1]), np.array([1, 0, 2]), np.array([0, 1, 2])]
+    assert in_ensemble_similarity(base_clusterings) == 1 / 3
+    base_clusterings = [np.array([0, 1]), np.array([0, 1])]
+    assert in_ensemble_similarity(base_clusterings) == 1
 
 
 @pytest.mark.parametrize("invalid", ["", None, [], [[1, 2, 3]]])
 def test_in_ensemble_similarity_with_invalid_input(invalid):
     """Tests the in_ensemble_similarity raises an error on invalid input."""
 
-    error = "base_clusterings should contain at least one np.ndarray."
+    error = "base_clusterings should contain at least two np.ndarrays."
     with pytest.raises(IndexError, match=error):
         in_ensemble_similarity(invalid)
 

@@ -21,8 +21,8 @@ def build_membership_matrix(base_clusterings: list[np.ndarray]) -> pd.DataFrame:
 def in_ensemble_similarity(base_clusterings: list[np.ndarray]) -> float:
     """Returns the average similarity among the base clusters using Jaccard score."""
 
-    if not base_clusterings or not isinstance(base_clusterings[0], np.ndarray):
-        raise IndexError("base_clusterings should contain at least one np.ndarray.")
+    if not base_clusterings or len(base_clusterings) < 2:
+        raise IndexError("base_clusterings should contain at least two np.ndarrays.")
 
     count = len(base_clusterings)
     index = np.arange(0, count)
@@ -32,10 +32,10 @@ def in_ensemble_similarity(base_clusterings: list[np.ndarray]) -> float:
         cluster_i = base_clusterings[i]
         for j in range(i + 1, count):
             cluster_j = base_clusterings[j]
-            similarity[i, j] = similarity[j, i] = jaccard_score(
-                cluster_i, cluster_j, average="weighted"
-            )
+            score = jaccard_score(cluster_i, cluster_j, average="weighted")
+            similarity.iloc[i, j] = similarity.iloc[j, i] = score
         average_similarity[i] = similarity.iloc[i].sum() / (count - 1)
+
     average_similarity[count - 1] = similarity.iloc[count - 1].sum() / (count - 1)
     return np.mean(average_similarity)
 
@@ -80,7 +80,7 @@ def consensus_function_10(bi_clust: list[np.ndarray]):
                     all_bi_clust_sets_unique = False
                     del bi_clust[i]
                     count -= 1
-                elif intersection_size == len(bi_clust_i):
+                elif intersection_size == len(bi_clust_j):
                     # Bj⊂Bi
                     all_bi_clust_sets_unique = False
                     del bi_clust[j]
@@ -110,7 +110,7 @@ def build_bi_clust(
     return result
 
 
-def multicons(base_clusterings):
+def multicons(base_clusterings: list[np.ndarray]):
     """Returns a dictionary with a list of consensus clustering vectors."""
 
     # 2 Calculate in-ensemble similarity
