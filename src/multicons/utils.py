@@ -118,7 +118,7 @@ def multicons(base_clusterings: list[np.ndarray]):
     # 3 Build the cluster membership matrix M
     membership_matrix = build_membership_matrix(base_clusterings)
     # 4 Generate FCPs from M for minsupport = 0
-    # 5 Sort the FCPs in DESCENDING order according to the size of the instance sets
+    # 5 Sort the FCPs in ascending order according to the size of the instance sets
     frequent_closed_itemsets = linear_closed_itemsets_miner(membership_matrix)
     # 6 MaxDT ← length(BaseClusterings)
     max_d_t = len(base_clusterings)

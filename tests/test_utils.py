@@ -10,6 +10,7 @@ from multicons import (
     linear_closed_itemsets_miner,
     multicons,
 )
+from multicons.utils import build_bi_clust
 
 
 def test_build_membership_matrix():
@@ -77,6 +78,31 @@ def test_in_ensemble_similarity_with_invalid_input(invalid):
     error = "base_clusterings should contain at least two np.ndarrays."
     with pytest.raises(IndexError, match=error):
         in_ensemble_similarity(invalid)
+
+
+def test_build_bi_clust():
+    """Tests the build_bi_clust function."""
+
+    membership_matrix = pd.DataFrame(
+        [
+            [1, 0, 0, 1],
+            [1, 0, 1, 0],
+            [0, 1, 1, 0],
+            [0, 1, 1, 0],
+        ],
+        columns=["A", "B", "C", "D"],
+    )
+    frequent_closed_itemsets = [
+        frozenset(["A", "C"]),
+        frozenset(["B", "C"]),
+        frozenset(["A", "D"]),
+        frozenset(["A", "B", "C"]),
+    ]
+    assert build_bi_clust(membership_matrix, frequent_closed_itemsets, 2) == [
+        set([1]),
+        set([2, 3]),
+        set([0]),
+    ]
 
 
 def test_linear_closed_itemsets_miner():
