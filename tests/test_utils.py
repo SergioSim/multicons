@@ -53,7 +53,7 @@ def test_build_membership_matrix():
     pd.testing.assert_frame_equal(value, expected)
 
 
-@pytest.mark.parametrize("invalid", ["", None, [], [[1, 2, 3]]])
+@pytest.mark.parametrize("invalid", [[], [[1, 2, 3]]])
 def test_build_membership_matrix_with_invalid_input(invalid):
     """Tests the build_memebership_matrix raises an error on invalid input."""
 
@@ -163,13 +163,13 @@ def test_multicons():
     value = multicons(base_clusterings)
     expected_consensus = np.array(
         [
-            np.array([0, 0, 0, 0, 0, 0, 0, 0, 0]),
+            np.array([1, 1, 1, 1, 1, 1, 1, 1, 1]),
             np.array([0, 0, 0, 1, 1, 1, 1, 1, 1]),
-            np.array([0, 0, 0, 2, 2, 2, 2, 1, 1]),
-            np.array([1, 1, 1, 0, 0, 2, 2, 3, 3]),
+            np.array([0, 0, 0, 1, 1, 1, 1, 2, 2]),
+            np.array([0, 0, 0, 3, 3, 1, 1, 2, 2]),
         ]
     )
-    expected_similarity = np.array([0.42222222, 0.48444444, 0.20296296, 0.19555556])
+    expected_similarity = np.array([0.44444444, 0.48444444, 0.46962963, 0.38074074])
     assert value["recommended"] == 1
     np.testing.assert_array_equal(value["consensus_vectors"], expected_consensus)
     assert (np.absolute(value["t_sim"] - expected_similarity) < 0.0000001).all()

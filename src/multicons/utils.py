@@ -3,13 +3,14 @@
 import numpy as np
 import pandas as pd
 from fim import eclat  # pylint: disable=no-name-in-module
+from scipy.optimize import linear_sum_assignment
 from sklearn.metrics import jaccard_score
 
 
-def build_membership_matrix(base_clusterings: list[np.ndarray]) -> pd.DataFrame:
+def build_membership_matrix(base_clusterings: np.ndarray) -> pd.DataFrame:
     """Computes and returns the membership matrix."""
 
-    if not base_clusterings or not isinstance(base_clusterings[0], np.ndarray):
+    if len(base_clusterings) == 0 or not isinstance(base_clusterings[0], np.ndarray):
         raise IndexError("base_clusterings should contain at least one np.ndarray.")
 
     res = []
@@ -50,12 +51,33 @@ def linear_closed_itemsets_miner(membership_matrix: pd.DataFrame):
     return sorted(map(lambda x: frozenset(x[0]), frequent_closed_itemsets), key=len)
 
 
-def assign_labels(bi_clust: list[np.ndarray], membership_matrix: pd.DataFrame):
+def assign_labels(bi_clust: list[set], base_clusterings: np.ndarray):
     """Returns a consensus vector with labels for each instance set in bi_clust."""
 
-    result = np.zeros(len(membership_matrix), dtype=int)
+    unique_labels = np.unique(base_clusterings.flatten())
+    max_label = unique_labels.max()
+    unique_labels = unique_labels.tolist()
+    for i in range(len(bi_clust) - len(unique_labels)):
+        unique_labels.append(max_label + i + 1)
+
+    cost_matrix = pd.DataFrame(0.0, index=range(len(bi_clust)), columns=unique_labels)
+    for i, itemset in enumerate(map(list, bi_clust)):
+        itemset_len = len(itemset)
+        for j, label in enumerate(unique_labels):
+            labels = np.ones(itemset_len) * label
+            score = np.array(
+                [
+                    jaccard_score(clustering[itemset], labels, average="weighted")
+                    for clustering in base_clusterings
+                ]
+            )
+            cost_matrix.loc[i, j] = itemset_len * (1 + score).sum()
+
+    _, col_ind = linear_sum_assignment(cost_matrix.apply(lambda x: x.max() - x, axis=1))
+
+    result = np.zeros(len(base_clusterings[0]), dtype=int)
     for i, itemset in enumerate(bi_clust):
-        result[list(itemset)] = i
+        result[list(itemset)] = col_ind[i]
     return result
 
 
@@ -113,6 +135,7 @@ def build_bi_clust(
 def multicons(base_clusterings: list[np.ndarray]):
     """Returns a dictionary with a list of consensus clustering vectors."""
 
+    base_clusterings = np.array(base_clusterings)
     # 2 Calculate in-ensemble similarity
     # similarity = in_ensemble_similarity(base_clusterings)
     # 3 Build the cluster membership matrix M
@@ -127,7 +150,7 @@ def multicons(base_clusterings: list[np.ndarray]):
     # 8 Assign a label to each set in BiClust to build the first consensus vector
     #   and store it in a list of vectors ConsVctrs
     consensus_vectors = [0] * max_d_t
-    consensus_vectors[max_d_t - 1] = assign_labels(bi_clust, membership_matrix)
+    consensus_vectors[max_d_t - 1] = assign_labels(bi_clust, base_clusterings)
 
     # 9 Build the remaining consensuses
     # 10 for DT = (MaxDT−1) to 1 do
@@ -138,7 +161,7 @@ def multicons(base_clusterings: list[np.ndarray]):
         consensus_function_10(bi_clust)
         # 13 Assign a label to each set in BiClust to build a consensus vector
         #    and add it to ConsVctrs
-        consensus_vectors[d_t - 1] = assign_labels(bi_clust, membership_matrix)
+        consensus_vectors[d_t - 1] = assign_labels(bi_clust, base_clusterings)
     # 14 end
 
     # 15 Remove similar consensuses
