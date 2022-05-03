@@ -134,6 +134,7 @@ def build_bi_clust(
 
 def multicons(base_clusterings: list[np.ndarray]):
     """Returns a dictionary with a list of consensus clustering vectors."""
+    # pylint: disable=too-many-locals
 
     base_clusterings = np.array(base_clusterings)
     # 2 Calculate in-ensemble similarity
@@ -166,6 +167,7 @@ def multicons(base_clusterings: list[np.ndarray]):
 
     # 15 Remove similar consensuses
     # 16 ST ← Vector of ‘1’s of length MaxDT
+    decision_thresholds = list(range(1, max_d_t + 1))
     stability = [1] * max_d_t
     # 17 for i = MaxDT to 2 do
     i = max_d_t - 1
@@ -183,6 +185,7 @@ def multicons(base_clusterings: list[np.ndarray]):
                 stability[i] += 1
                 # 23 Remove ST [j]
                 del stability[j]
+                del decision_thresholds[j]
                 # 24 Remove Vj from ConsVctrs
                 del consensus_vectors[j]
                 i -= 1
@@ -211,8 +214,16 @@ def multicons(base_clusterings: list[np.ndarray]):
         t_sim[i] /= max_d_t
     # 37 end
     recommended = np.where(t_sim == np.amax(t_sim))[0][0]
+
+    tree_quality = 1
+    if len(np.unique(consensus_vectors[0])) == 1:
+        tree_quality = 1 - (stability[0] - 1) / max(decision_thresholds)
+
     return {
-        "recommended": recommended,
         "consensus_vectors": consensus_vectors,
-        "t_sim": t_sim,
+        "decision_thresholds": decision_thresholds,
+        "recommended": recommended,
+        "stability": stability,
+        "tree_quality": tree_quality,
+        "ensemble_similarity": t_sim,
     }
