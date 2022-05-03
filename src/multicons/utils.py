@@ -1,5 +1,6 @@
 """Utility functions"""
 
+import graphviz
 import numpy as np
 import pandas as pd
 from fim import eclat  # pylint: disable=no-name-in-module
@@ -26,10 +27,10 @@ def in_ensemble_similarity(base_clusterings: list[np.ndarray]) -> float:
         raise IndexError("base_clusterings should contain at least two np.ndarrays.")
 
     count = len(base_clusterings)
-    index = np.arange(0, count)
+    index = np.arange(count)
     similarity = pd.DataFrame(0.0, index=index, columns=index)
     average_similarity = np.zeros(count)
-    for i in range(0, count - 1):
+    for i in range(count - 1):
         cluster_i = base_clusterings[i]
         for j in range(i + 1, count):
             cluster_j = base_clusterings[j]
@@ -200,7 +201,7 @@ def multicons(base_clusterings: list[np.ndarray]):
     # 29 TSim ← Vector of ‘0’s of length L
     t_sim = np.zeros(consensus_count)
     # 30 for i = 1 to L do
-    for i in range(0, consensus_count):
+    for i in range(consensus_count):
         # 31 Ci ← ith consensus in ConsVctrs
         consensus_i = consensus_vectors[i]
         # 32 for j = 1 to MaxDT do
@@ -227,3 +228,44 @@ def multicons(base_clusterings: list[np.ndarray]):
         "tree_quality": tree_quality,
         "ensemble_similarity": t_sim,
     }
+
+
+def cons_tree(consensus: dict):
+    """Receives the result of multicons `consensus` and returns a ConsTree graph."""
+
+    graph = graphviz.Digraph()
+    tree_quality = consensus["tree_quality"]
+    graph.attr("graph", label=f"ConsTree\nTree Quality = {tree_quality}", labelloc="t")
+
+    consensus_vectors = consensus["consensus_vectors"]
+    unique_count = [np.unique(vec, return_counts=True) for vec in consensus_vectors]
+
+    previous = []
+    for i, nodes_count in enumerate(unique_count):
+        attributes = {"fillcolor": "slategray2", "shape": "ellipse", "style": "filled"}
+        if i == consensus["recommended"]:
+            attributes.update({"fillcolor": "darkseagreen", "shape": "box"})
+        for j in range(len(nodes_count[0])):
+            node_id = f"{i}{nodes_count[0][j]}"
+            node_size = str(nodes_count[1][j])
+            attributes["width"] = node_size
+            graph.attr("node", **attributes)
+            graph.node(node_id, node_size)
+            if i == 0:
+                continue
+            for node in np.unique(previous[consensus_vectors[i] == nodes_count[0][j]]):
+                graph.edge(f"{i - 1}{node}", node_id)
+
+        previous = consensus_vectors[i]
+        with graph.subgraph(name="cluster") as sub_graph:
+            sub_graph.attr("graph", label="Legend")
+            sub_graph.attr("node", shape="box", width="")
+            values = [
+                f"DT={consensus['decision_thresholds'][i]}",
+                f"ST={consensus['stability'][i]}",
+                f"Similarity={round(consensus['ensemble_similarity'][i], 2)}",
+            ]
+            sub_graph.node(f"legend_{i}", " ".join(values))
+            if i > 0:
+                sub_graph.edge(f"legend_{i-1}", f"legend_{i}")
+    return graph

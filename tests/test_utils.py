@@ -6,6 +6,7 @@ import pytest
 
 from multicons import (
     build_membership_matrix,
+    cons_tree,
     in_ensemble_similarity,
     linear_closed_itemsets_miner,
     multicons,
@@ -177,3 +178,75 @@ def test_multicons():
     assert value["tree_quality"] == 1
     np.testing.assert_array_equal(value["decision_thresholds"], np.array([1, 2, 4, 5]))
     np.testing.assert_array_equal(value["stability"], np.array([1, 1, 2, 1]))
+
+
+def test_cons_tree():
+    """Tests the cons_tree function."""
+
+    base_clusterings = [
+        np.array([0, 0, 0, 1, 1, 1, 1, 1, 1]),
+        np.array([0, 0, 0, 1, 1, 1, 1, 1, 1]),
+        np.array([0, 0, 0, 0, 0, 1, 1, 2, 2]),
+        np.array([1, 1, 1, 0, 0, 0, 0, 2, 2]),
+        np.array([1, 1, 1, 0, 0, 0, 0, 2, 2]),
+    ]
+    tree = cons_tree(multicons(base_clusterings))
+    assert str(tree).split("\n") == [
+        "digraph {",
+        '\tgraph [label="ConsTree',
+        'Tree Quality = 1.0" labelloc=t]',
+        "\tnode [fillcolor=slategray2 shape=ellipse style=filled width=9]",
+        "\t01 [label=9]",
+        "\tsubgraph cluster {",
+        "\t\tgraph [label=Legend]",
+        '\t\tnode [shape=box width=""]',
+        '\t\tlegend_0 [label="DT=1 ST=1 Similarity=0.44"]',
+        "\t}",
+        "\tnode [fillcolor=darkseagreen shape=box style=filled width=3]",
+        "\t10 [label=3]",
+        "\t01 -> 10",
+        "\tnode [fillcolor=darkseagreen shape=box style=filled width=6]",
+        "\t11 [label=6]",
+        "\t01 -> 11",
+        "\tsubgraph cluster {",
+        "\t\tgraph [label=Legend]",
+        '\t\tnode [shape=box width=""]',
+        '\t\tlegend_1 [label="DT=2 ST=1 Similarity=0.48"]',
+        "\t\tlegend_0 -> legend_1",
+        "\t}",
+        "\tnode [fillcolor=slategray2 shape=ellipse style=filled width=3]",
+        "\t20 [label=3]",
+        "\t10 -> 20",
+        "\tnode [fillcolor=slategray2 shape=ellipse style=filled width=4]",
+        "\t21 [label=4]",
+        "\t11 -> 21",
+        "\tnode [fillcolor=slategray2 shape=ellipse style=filled width=2]",
+        "\t22 [label=2]",
+        "\t11 -> 22",
+        "\tsubgraph cluster {",
+        "\t\tgraph [label=Legend]",
+        '\t\tnode [shape=box width=""]',
+        '\t\tlegend_2 [label="DT=4 ST=2 Similarity=0.47"]',
+        "\t\tlegend_1 -> legend_2",
+        "\t}",
+        "\tnode [fillcolor=slategray2 shape=ellipse style=filled width=3]",
+        "\t30 [label=3]",
+        "\t20 -> 30",
+        "\tnode [fillcolor=slategray2 shape=ellipse style=filled width=2]",
+        "\t31 [label=2]",
+        "\t21 -> 31",
+        "\tnode [fillcolor=slategray2 shape=ellipse style=filled width=2]",
+        "\t32 [label=2]",
+        "\t22 -> 32",
+        "\tnode [fillcolor=slategray2 shape=ellipse style=filled width=2]",
+        "\t33 [label=2]",
+        "\t21 -> 33",
+        "\tsubgraph cluster {",
+        "\t\tgraph [label=Legend]",
+        '\t\tnode [shape=box width=""]',
+        '\t\tlegend_3 [label="DT=5 ST=1 Similarity=0.38"]',
+        "\t\tlegend_2 -> legend_3",
+        "\t}",
+        "}",
+        "",
+    ]
