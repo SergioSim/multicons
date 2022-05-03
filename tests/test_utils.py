@@ -172,4 +172,8 @@ def test_multicons():
     expected_similarity = np.array([0.44444444, 0.48444444, 0.46962963, 0.38074074])
     assert value["recommended"] == 1
     np.testing.assert_array_equal(value["consensus_vectors"], expected_consensus)
-    assert (np.absolute(value["t_sim"] - expected_similarity) < 0.0000001).all()
+    similarity = value["ensemble_similarity"]
+    assert (np.absolute(similarity - expected_similarity) < 0.0000001).all()
+    assert value["tree_quality"] == 1
+    np.testing.assert_array_equal(value["decision_thresholds"], np.array([1, 2, 4, 5]))
+    np.testing.assert_array_equal(value["stability"], np.array([1, 1, 2, 1]))
