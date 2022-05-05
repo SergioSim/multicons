@@ -11,7 +11,11 @@ from multicons import (
     linear_closed_itemsets_miner,
     multicons,
 )
-from multicons.utils import build_bi_clust
+from multicons.utils import (
+    build_bi_clust,
+    ensemble_jaccard_score,
+    sklearn_jaccard_score,
+)
 
 
 def test_build_membership_matrix():
@@ -161,7 +165,8 @@ def test_multicons():
         np.array([1, 1, 1, 0, 0, 0, 0, 2, 2]),
         np.array([1, 1, 1, 0, 0, 0, 0, 2, 2]),
     ]
-    value = multicons(base_clusterings)
+    # Using sklearn_jaccard_score
+    value = multicons(base_clusterings, similarity_measure=sklearn_jaccard_score)
     expected_consensus = np.array(
         [
             np.array([1, 1, 1, 1, 1, 1, 1, 1, 1]),
@@ -172,6 +177,30 @@ def test_multicons():
     )
     expected_similarity = np.array([0.44444444, 0.48444444, 0.46962963, 0.38074074])
     assert value["recommended"] == 1
+    np.testing.assert_array_equal(value["consensus_vectors"], expected_consensus)
+    similarity = value["ensemble_similarity"]
+    assert (np.absolute(similarity - expected_similarity) < 0.0000001).all()
+    assert value["tree_quality"] == 1
+    np.testing.assert_array_equal(value["decision_thresholds"], np.array([1, 2, 4, 5]))
+    np.testing.assert_array_equal(value["stability"], np.array([1, 1, 2, 1]))
+
+    # Using ensemble_jaccard_score
+    value = multicons(base_clusterings, similarity_measure=ensemble_jaccard_score)
+    expected_consensus = np.array(
+        [
+            np.array([0, 0, 0, 0, 0, 0, 0, 0, 0]),
+            np.array([0, 0, 0, 1, 1, 1, 1, 1, 1]),
+            np.array([0, 0, 0, 2, 2, 2, 2, 1, 1]),
+            np.array([1, 1, 1, 0, 0, 2, 2, 3, 3]),
+        ]
+    )
+    expected_similarity = np.array([0.16666667, 0.72355556, 0.86, 0.78095238])
+    # Check that the ensemble_jaccard_score is the default.
+    default_value = multicons(base_clusterings)
+    np.testing.assert_array_equal(
+        value["ensemble_similarity"], default_value["ensemble_similarity"]
+    )
+    assert value["recommended"] == 2
     np.testing.assert_array_equal(value["consensus_vectors"], expected_consensus)
     similarity = value["ensemble_similarity"]
     assert (np.absolute(similarity - expected_similarity) < 0.0000001).all()
@@ -190,7 +219,9 @@ def test_cons_tree():
         np.array([1, 1, 1, 0, 0, 0, 0, 2, 2]),
         np.array([1, 1, 1, 0, 0, 0, 0, 2, 2]),
     ]
-    tree = cons_tree(multicons(base_clusterings))
+    tree = cons_tree(
+        multicons(base_clusterings, similarity_measure=sklearn_jaccard_score)
+    )
     assert str(tree).split("\n") == [
         "digraph {",
         '\tgraph [label="ConsTree',
