@@ -1,11 +1,42 @@
 """Utility functions"""
 
+from typing import Callable
+
 import graphviz
 import numpy as np
 import pandas as pd
 from fim import eclat  # pylint: disable=no-name-in-module
 from scipy.optimize import linear_sum_assignment
 from sklearn.metrics import jaccard_score
+
+
+def jaccard_index(prediction: np.ndarray, true_labels: np.ndarray):
+    """Returns the jaccard index using the formula: |X ∩ Y| / (|X| + |Y| - |X ∩ Y|)."""
+
+    intersection_size = (prediction == true_labels).sum()
+    return intersection_size / (len(true_labels) + len(prediction) - intersection_size)
+
+
+def sklearn_jaccard_score(prediction: np.ndarray, true_labels: np.ndarray):
+    """Wraps the scikit-learn `jaccard_score` function with weighted average."""
+
+    return jaccard_score(prediction, true_labels, average="weighted")
+
+
+def ensemble_jaccard_score(prediction: np.ndarray, true_labels: np.ndarray):
+    """Computes a jaccard score without considering the underlining labels."""
+
+    prediction_sets = [set(np.where(prediction == x)[0]) for x in np.unique(prediction)]
+    labels_sets = [set(np.where(true_labels == x)[0]) for x in np.unique(true_labels)]
+    score = 0
+    for itemset in prediction_sets:
+        intersections = []
+        for itemset_j in labels_sets:
+            intersections.append(
+                len(itemset.intersection(itemset_j)) / len(itemset.union(itemset_j))
+            )
+        score += max(intersections) - min(intersections)
+    return 2 * score / (len(prediction_sets) + len(labels_sets))
 
 
 def build_membership_matrix(base_clusterings: np.ndarray) -> pd.DataFrame:
@@ -34,7 +65,7 @@ def in_ensemble_similarity(base_clusterings: list[np.ndarray]) -> float:
         cluster_i = base_clusterings[i]
         for j in range(i + 1, count):
             cluster_j = base_clusterings[j]
-            score = jaccard_score(cluster_i, cluster_j, average="weighted")
+            score = sklearn_jaccard_score(cluster_i, cluster_j)
             similarity.iloc[i, j] = similarity.iloc[j, i] = score
         average_similarity[i] = similarity.iloc[i].sum() / (count - 1)
 
@@ -52,7 +83,13 @@ def linear_closed_itemsets_miner(membership_matrix: pd.DataFrame):
     return sorted(map(lambda x: frozenset(x[0]), frequent_closed_itemsets), key=len)
 
 
-def assign_labels(bi_clust: list[set], base_clusterings: np.ndarray):
+def assign_labels(
+    bi_clust: list[set],
+    base_clusterings: np.ndarray,
+    similarity_measure: Callable[
+        [np.ndarray, np.ndarray], int
+    ] = ensemble_jaccard_score,
+):
     """Returns a consensus vector with labels for each instance set in bi_clust."""
 
     unique_labels = np.unique(base_clusterings.flatten())
@@ -68,13 +105,13 @@ def assign_labels(bi_clust: list[set], base_clusterings: np.ndarray):
             labels = np.ones(itemset_len) * label
             score = np.array(
                 [
-                    jaccard_score(clustering[itemset], labels, average="weighted")
+                    similarity_measure(clustering[itemset], labels)
                     for clustering in base_clusterings
                 ]
             )
             cost_matrix.loc[i, j] = itemset_len * (1 + score).sum()
 
-    _, col_ind = linear_sum_assignment(cost_matrix.apply(lambda x: x.max() - x, axis=1))
+    col_ind = linear_sum_assignment(cost_matrix.apply(lambda x: x.max() - x, axis=1))[1]
 
     result = np.zeros(len(base_clusterings[0]), dtype=int)
     for i, itemset in enumerate(bi_clust):
@@ -133,7 +170,13 @@ def build_bi_clust(
     return result
 
 
-def multicons(base_clusterings: list[np.ndarray]):
+def multicons(
+    base_clusterings: list[np.ndarray],
+    consensus_function: Callable[[list[np.ndarray]], None] = consensus_function_10,
+    similarity_measure: Callable[
+        [np.ndarray, np.ndarray], int
+    ] = ensemble_jaccard_score,
+):
     """Returns a dictionary with a list of consensus clustering vectors."""
     # pylint: disable=too-many-locals
 
@@ -152,7 +195,9 @@ def multicons(base_clusterings: list[np.ndarray]):
     # 8 Assign a label to each set in BiClust to build the first consensus vector
     #   and store it in a list of vectors ConsVctrs
     consensus_vectors = [0] * max_d_t
-    consensus_vectors[max_d_t - 1] = assign_labels(bi_clust, base_clusterings)
+    consensus_vectors[max_d_t - 1] = assign_labels(
+        bi_clust, base_clusterings, similarity_measure
+    )
 
     # 9 Build the remaining consensuses
     # 10 for DT = (MaxDT−1) to 1 do
@@ -160,10 +205,12 @@ def multicons(base_clusterings: list[np.ndarray]):
         # 11 BiClust ← BiClust ∪ {instance sets of FCPs built from DT base clusters}
         bi_clust += build_bi_clust(membership_matrix, frequent_closed_itemsets, d_t)
         # 12 Call the consensus function (Algo. 10)
-        consensus_function_10(bi_clust)
+        consensus_function(bi_clust)
         # 13 Assign a label to each set in BiClust to build a consensus vector
         #    and add it to ConsVctrs
-        consensus_vectors[d_t - 1] = assign_labels(bi_clust, base_clusterings)
+        consensus_vectors[d_t - 1] = assign_labels(
+            bi_clust, base_clusterings, similarity_measure
+        )
     # 14 end
 
     # 15 Remove similar consensuses
@@ -181,7 +228,7 @@ def multicons(base_clusterings: list[np.ndarray]):
             # 20 Vj ← jth consensus in ConsVctrs
             consensus_j = consensus_vectors[j]
             # 21 if Jaccard(Vi , Vj ) = 1 then
-            if jaccard_score(consensus_i, consensus_j, average="weighted") == 1:
+            if similarity_measure(consensus_i, consensus_j) == 1:
                 # 22 ST [i] ← ST [i] + 1
                 stability[i] += 1
                 # 23 Remove ST [j]
@@ -209,7 +256,7 @@ def multicons(base_clusterings: list[np.ndarray]):
             # 33 Cj ← jth clustering in BaseClusterings
             consensus_j = base_clusterings[j]
             # 34 TSim[i] ← TSim[i] + Jaccard(Ci,Cj)
-            t_sim[i] += jaccard_score(consensus_i, consensus_j, average="weighted")
+            t_sim[i] += similarity_measure(consensus_i, consensus_j)
         # 35 end
         # 36 Sim[i] ← TSim[i] / MaxDT
         t_sim[i] /= max_d_t
@@ -239,6 +286,7 @@ def cons_tree(consensus: dict):
 
     consensus_vectors = consensus["consensus_vectors"]
     unique_count = [np.unique(vec, return_counts=True) for vec in consensus_vectors]
+    max_size = len(consensus_vectors[0])
 
     previous = []
     for i, nodes_count in enumerate(unique_count):
@@ -247,10 +295,9 @@ def cons_tree(consensus: dict):
             attributes.update({"fillcolor": "darkseagreen", "shape": "box"})
         for j in range(len(nodes_count[0])):
             node_id = f"{i}{nodes_count[0][j]}"
-            node_size = str(nodes_count[1][j])
-            attributes["width"] = node_size
+            attributes["width"] = str(int(9 * nodes_count[1][j] / max_size))
             graph.attr("node", **attributes)
-            graph.node(node_id, node_size)
+            graph.node(node_id, str(nodes_count[1][j]))
             if i == 0:
                 continue
             for node in np.unique(previous[consensus_vectors[i] == nodes_count[0][j]]):
