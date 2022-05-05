@@ -1,6 +1,15 @@
-# MultiCons (Multiple Consensuses) algorithm implementation
+# MultiCons
 
-### References:
+This python package provides an implementation of the MultiCons (Multiple Consensus)
+algorithm.
+
+MultiCons is a consensus clustering method that uses the frequent closed itemset mining
+technique to find similarities in the base clustering solutions.
+
+The implementation aims to follow the original description of the MultiCons method from
+the references below.
+
+## References
 
 Atheer A. "A closed patterns-based approach to the consensus clustering problem".
 Other [cs.OH]. Université Côte d’Azur, 2016. English. <NNT : 2016AZUR4111>. <tel-01478626>

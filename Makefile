@@ -6,16 +6,49 @@ DOCKER_USER          = $(DOCKER_UID):$(DOCKER_GID)
 COMPOSE              = DOCKER_USER=$(DOCKER_USER) docker-compose
 COMPOSE_RUN          = $(COMPOSE) run --rm
 COMPOSE_RUN_APP      = $(COMPOSE_RUN) app
+MKDOCS               = $(COMPOSE_RUN) -e HOME=/app/.jupyterlab --publish "8000:8000" app mkdocs
+JUPYTER              = $(COMPOSE_RUN) -e HOME=/app/.jupyterlab --publish "8888:8888"
+COMPOSE_RUN_JUPYTER  = $(JUPYTER) app jupyter lab
 
 default: help
+
+# ======================================================================================
+# FILES
+# ======================================================================================
+
+.jupyterlab:
+	mkdir -p .jupyterlab
+
+# ======================================================================================
+# RULES
+# ======================================================================================
 
 build: ## build the docker container
 	@$(COMPOSE) build
 .PHONY: build
 
 down: ## stop and remove the docker container
-	@$(COMPOSE) down
+	rm -rf .jupyterlab
+	@$(COMPOSE) down --rmi all -v --remove-orphans
 .PHONY: down
+
+docs-build: ## build documentation site
+	@$(MKDOCS) build
+.PHONY: docs-build
+
+docs-deploy: ## deploy documentation site
+	@$(MKDOCS) gh-deploy
+.PHONY: docs-deploy
+
+docs-serve: ## run mkdocs live server
+	@$(MKDOCS) serve --dev-addr 0.0.0.0:8000
+.PHONY: docs-serve
+
+jupyter: \
+	.jupyterlab
+jupyter:  ## run jupyter lab
+	@$(COMPOSE_RUN_JUPYTER) --notebook-dir=/app/docs --ip "0.0.0.0"
+.PHONY: jupyter
 
 test: ## run tests
 	bin/pytest -vv

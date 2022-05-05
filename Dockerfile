@@ -5,7 +5,7 @@ RUN pip install --upgrade pip
 
 RUN apt-get update && \
     apt-get -y upgrade && \
-    apt-get install -y gcc python3-dev && \
+    apt-get install -y gcc git graphviz python3-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # -- Development --
@@ -17,5 +17,7 @@ COPY . /app/
 
 RUN pip install -e .[dev]
 
-USER ${DOCKER_USER:-1000}
+RUN jupyter nbextension install --py jupytext && \
+    jupyter nbextension enable --py jupytext
 
+USER ${DOCKER_USER:-1000}
