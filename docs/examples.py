@@ -33,6 +33,8 @@
 # **Let's get a first visual of the dataset and our base clusterings:**
 
 # %%
+from os import path
+
 import numpy as np
 import pandas as pd
 
@@ -47,7 +49,8 @@ from multicons import cons_tree, multicons
 
 # %%
 # Load the data
-cassini = pd.read_csv("/app/docs/cassini.csv")
+file_name = "cassini.csv" if path.exists("cassini.csv") else "docs/cassini.csv"
+cassini = pd.read_csv(file_name)
 # Remove the class labels
 cassini_train_data = cassini.drop(['class'], axis=1)
 
