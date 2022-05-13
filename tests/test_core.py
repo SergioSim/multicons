@@ -11,7 +11,7 @@ from multicons import (
     linear_closed_itemsets_miner,
     multicons,
 )
-from multicons.utils import build_bi_clust, ensemble_jaccard_score
+from multicons.core import build_bi_clust, ensemble_jaccard_score
 
 
 def test_build_membership_matrix():
