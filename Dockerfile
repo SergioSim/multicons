@@ -17,7 +17,7 @@ COPY . /app/
 
 RUN pip install -e .[dev]
 
-RUN jupyter nbextension install --py jupytext && \
-    jupyter nbextension enable --py jupytext
+RUN jupyter nbextension install jupytext --py && \
+    jupyter nbextension enable jupytext --py
 
 USER ${DOCKER_USER:-1000}
