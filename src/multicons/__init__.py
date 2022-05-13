@@ -2,7 +2,7 @@
 
 # flake8: noqa
 
-from multicons.utils import (
+from multicons.core import (
     build_membership_matrix,
     cons_tree,
     in_ensemble_similarity,
