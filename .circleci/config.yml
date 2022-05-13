@@ -45,6 +45,42 @@ jobs:
             - ~/.local
           key: v1-dependencies-{{ .Revision }}
 
+  # Build documentation
+  build-docs:
+    docker:
+      - image: cimg/python:3.10.0
+    working_directory: ~/multicons
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ .Revision }}
+      - run:
+          name: Build documentation
+          command: ~/.local/bin/mkdocs build
+
+  # Deploy documentation to GitHub pages
+  deploy-docs:
+    docker:
+      - image: cimg/python:3.10.0
+    working_directory: ~/multicons
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ .Revision }}
+      - add_ssh_keys:
+          fingerprints:
+            - "ff:ba:34:bf:04:69:af:b9:6f:6b:31:92:7b:49:70:b5"
+      - run:
+          name: Deploy documentation to GitHub Pages
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y graphviz
+            git config --global user.email "katzenmaul@users.noreply.github.com"
+            git config --global user.name "Bot"
+            ~/.local/bin/mkdocs gh-deploy
+
   # Lint source code
   lint:
     docker:
@@ -98,6 +134,12 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - build-docs:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /.*/
       - lint:
           requires:
             - build
@@ -108,5 +150,14 @@ workflows:
           requires:
             - build
           filters:
+            tags:
+              only: /.*/
+      # Publish the documentation website to GitHub Pages.
+      - deploy-docs:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
             tags:
               only: /.*/
