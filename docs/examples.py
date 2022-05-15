@@ -37,15 +37,15 @@ from os import path
 
 import numpy as np
 import pandas as pd
-
-# %%
 from fcmeans import FCM
 from matplotlib import pyplot as plt
 from sklearn.cluster import DBSCAN, AgglomerativeClustering, KMeans, SpectralClustering
 from sklearn.mixture import GaussianMixture
 from sklearn_extra.cluster import KMedoids
 
-from multicons import cons_tree, multicons
+from multicons import MultiCons
+
+np.set_printoptions(threshold=100)
 
 # %%
 # Load the data
@@ -56,7 +56,9 @@ cassini_train_data = cassini.drop(['class'], axis=1)
 
 # %%
 # Setup the plot axes
-fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(18, 12), sharex=True, sharey=True)
+fig, axes = plt.subplots(
+    nrows=3, ncols=3, figsize=(18, 12), sharex=True, sharey=True
+)
 # Common plot arguments
 common_kwargs = {"x": "x", "y": "y", "colorbar": False, "colormap": "Paired"}
 # Our collection of base clusterings
@@ -132,41 +134,48 @@ np.array(base_clusterings)
 # **Now, let's compute the consensus candidates with MultiCons:**
 
 # %%
-consensus = multicons(base_clusterings)
-# The multicons function returns a dictionary with metrics for the consensus candidates.
-list(consensus.keys())
+# MultiCons implementation aims to follow scikit-learn conventions.
+consensus = MultiCons().fit(base_clusterings)
+consensus
 
 # %%
-# The `consensus_vectors` member is a python list containing the consensus candidates.
+# The `consensus_vectors` attribute is a python list containing the
+# consensus candidates.
 # We transform it to a numpy array to better visualize it here.
-np.array(consensus['consensus_vectors'])
+np.array(consensus.consensus_vectors)
 
 # %%
-# The `decision_thresholds` member contains a list of decision thresholds values
+# The `decision_thresholds` attribute contains a list of decision thresholds
 # for each consensus vector.
-consensus['decision_thresholds']
+consensus.decision_thresholds
 
 # %%
-# The `recommended` member contains the index of the recommended consensus vector
-consensus['recommended']
+# The `recommended` attribute contains the index of the recommended consensus
+# vector
+consensus.recommended
 
 # %%
-# The `stability` member contains a list of stability values for each consensus vector.
-consensus['stability']
+# The `labels_` attribute contains the recommended consensus vector
+consensus.labels_
 
 # %%
-# The `tree_quality` member contains a measure of the tree quality between 0 and 1.
-# Higher is better.
-consensus['tree_quality']
+# The `stability` attribute contains a list of stability values
+# for each consensus vector.
+consensus.stability
+
+# %%
+# The `tree_quality` member contains a measure of the tree quality.
+# The measure ranges between 0 and 1. Higher is better.
+consensus.tree_quality
 
 # %%
 # The `ensemble_similarity` contains a list of ensemble similarity measures
 # for each consensus vector.
 # They are between 0 and 1. Higher is better.
-consensus['ensemble_similarity']
+consensus.ensemble_similarity
 
 # %% [markdown]
 # **Finally, let's visualize the consenus candidates using the ConsTree method:**
 
 # %%
-cons_tree(consensus)
+consensus.cons_tree()
