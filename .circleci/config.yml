@@ -79,6 +79,8 @@ jobs:
             sudo apt-get install -y graphviz
             git config --global user.email "katzenmaul@users.noreply.github.com"
             git config --global user.name "Bot"
+            ~/.local/bin/mkdocs build
+            git add -f docs/*.svg
             ~/.local/bin/mkdocs gh-deploy
 
   # Lint source code
@@ -138,6 +140,8 @@ workflows:
           requires:
             - build
           filters:
+            branches:
+                ignore: master
             tags:
               only: /.*/
       - lint:
