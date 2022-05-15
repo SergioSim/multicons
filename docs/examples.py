@@ -39,7 +39,13 @@ import numpy as np
 import pandas as pd
 from fcmeans import FCM
 from matplotlib import pyplot as plt
-from sklearn.cluster import DBSCAN, AgglomerativeClustering, KMeans, SpectralClustering
+from sklearn.cluster import (
+    DBSCAN,
+    AgglomerativeClustering,
+    Birch,
+    KMeans,
+    SpectralClustering,
+)
 from sklearn.mixture import GaussianMixture
 from sklearn_extra.cluster import KMedoids
 
@@ -49,8 +55,8 @@ np.set_printoptions(threshold=100)
 
 # %%
 # Load the data
-prefix = "" if path.exists("cassini.csv") else "docs/"
-file_name = f"{prefix}cassini.csv"
+file_prefix = "" if path.exists("cassini.csv") else "docs/"
+file_name = f"{file_prefix}cassini.csv"
 cassini = pd.read_csv(file_name)
 # Remove the class labels
 cassini_train_data = cassini.drop(['class'], axis=1)
@@ -91,7 +97,7 @@ cassini_train_data.plot.scatter(
 )
 
 # C-means
-fcm = FCM(n_clusters=3)
+fcm = FCM(n_clusters=3, max_iter=8, m=10)
 fcm.fit(cassini_train_data.values)
 base_clusterings.append(fcm.predict(cassini_train_data.values))
 cassini_train_data.plot.scatter(
@@ -104,18 +110,25 @@ cassini_train_data.plot.scatter(
     title="PAM", ax=axes[1, 2], c=base_clusterings[-1], **common_kwargs
 )
 
+# BIRCH
+birch = Birch(n_clusters=3, threshold=0.7)
+base_clusterings.append(birch.fit_predict(cassini_train_data))
+cassini_train_data.plot.scatter(
+    title="BIRCH", ax=axes[2, 0], c=base_clusterings[-1], **common_kwargs
+)
+
 # Spectral
 base_clusterings.append(
     SpectralClustering(n_clusters=3).fit_predict(cassini_train_data)
 )
 cassini_train_data.plot.scatter(
-    title="Spectral", ax=axes[2, 0], c=base_clusterings[-1], **common_kwargs
+    title="Spectral", ax=axes[2, 1], c=base_clusterings[-1], **common_kwargs
 )
 
 # DBSCAN
 base_clusterings.append(DBSCAN(eps=0.2).fit_predict(cassini_train_data))
 cassini_train_data.plot.scatter(
-    title="DBSCAN", ax=axes[2, 1], c=base_clusterings[-1], **common_kwargs
+    title="DBSCAN", ax=axes[2, 2], c=base_clusterings[-1], **common_kwargs
 )
 
 fig.show()
@@ -160,6 +173,14 @@ consensus.recommended
 consensus.labels_
 
 # %%
+# Plot the recommended consensus clustering solution
+fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(6, 4))
+cassini_train_data.plot.scatter(
+    title="MultiCons", ax=axes, c=consensus.labels_, **common_kwargs
+)
+fig.show()
+
+# %%
 # The `stability` attribute contains a list of stability values
 # for each consensus vector.
 consensus.stability
@@ -184,7 +205,7 @@ cons_tree
 
 # %%
 # Save the graph to a file
-cons_tree.render(outfile=f"{prefix}CassiniConsTree.svg", cleanup=True)
+cons_tree.render(outfile=f"{file_prefix}CassiniConsTree.svg", cleanup=True)
 
 # %% [markdown]
 # The graph in full size: [CassiniConsTree.svg](../CassiniConsTree.svg)
