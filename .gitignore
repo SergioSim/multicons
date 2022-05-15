@@ -140,3 +140,4 @@ dmypy.json
 .jupyterlab
 /docs/*.ipynb
 /docs/.ipynb_checkpoints
+/docs/*.svg

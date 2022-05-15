@@ -49,7 +49,8 @@ np.set_printoptions(threshold=100)
 
 # %%
 # Load the data
-file_name = "cassini.csv" if path.exists("cassini.csv") else "docs/cassini.csv"
+prefix = "" if path.exists("cassini.csv") else "docs/"
+file_name = f"{prefix}cassini.csv"
 cassini = pd.read_csv(file_name)
 # Remove the class labels
 cassini_train_data = cassini.drop(['class'], axis=1)
@@ -178,4 +179,12 @@ consensus.ensemble_similarity
 # **Finally, let's visualize the consenus candidates using the ConsTree method:**
 
 # %%
-consensus.cons_tree()
+cons_tree = consensus.cons_tree()
+cons_tree
+
+# %%
+# Save the graph to a file
+cons_tree.render(outfile=f"{prefix}CassiniConsTree.svg", cleanup=True)
+
+# %% [markdown]
+# The graph in full size: [CassiniConsTree.svg](../CassiniConsTree.svg)
