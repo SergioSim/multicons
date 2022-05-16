@@ -2,6 +2,7 @@
 
 # flake8: noqa
 
+from multicons.consensus import consensus_function_10
 from multicons.core import MultiCons
 from multicons.utils import (
     build_membership_matrix,

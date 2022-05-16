@@ -9,7 +9,7 @@ from multicons import (
     in_ensemble_similarity,
     linear_closed_itemsets_miner,
 )
-from multicons.utils import build_bi_clust
+from multicons.utils import build_base_clusterings, build_bi_clust
 
 
 def test_utils_build_membership_matrix():
@@ -61,6 +61,50 @@ def test_utils_build_membership_matrix_with_invalid_input(invalid):
     error = "base_clusterings should contain at least one np.ndarray."
     with pytest.raises(IndexError, match=error):
         build_membership_matrix(invalid)
+
+
+def test_utils_build_base_clusterings():
+    """Tests the build_base_clusterings should return the expected result."""
+
+    membership_matrix = pd.DataFrame(
+        [
+            [1, 0, 0, 1, 1, 0, 0],
+            [0, 1, 1, 0, 0, 1, 0],
+            [0, 1, 1, 0, 0, 0, 1],
+        ],
+        columns=list(range(7)),
+        dtype=bool,
+    )
+    value = build_base_clusterings(membership_matrix)
+    expected = np.array([np.array([0, 1, 1]), np.array([1, 0, 0]), np.array([0, 1, 2])])
+    np.testing.assert_array_equal(value, expected)
+
+    membership_matrix = pd.DataFrame(
+        [
+            [1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0],
+            [1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0],
+            [1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0],
+            [0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0],
+            [0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0],
+            [0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0],
+            [0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0],
+            [0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+            [0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+        ],
+        columns=list(range(13)),
+        dtype=bool,
+    )
+    value = build_base_clusterings(membership_matrix)
+    expected = np.array(
+        [
+            np.array([0, 0, 0, 1, 1, 1, 1, 1, 1]),
+            np.array([0, 0, 0, 1, 1, 1, 1, 1, 1]),
+            np.array([0, 0, 0, 0, 0, 1, 1, 2, 2]),
+            np.array([1, 1, 1, 0, 0, 0, 0, 2, 2]),
+            np.array([1, 1, 1, 0, 0, 0, 0, 2, 2]),
+        ]
+    )
+    np.testing.assert_array_equal(value, expected)
 
 
 def test_utils_in_ensemble_similarity():
