@@ -92,13 +92,16 @@ def test_utils_build_bi_clust():
             [0, 1, 1, 0],
         ],
         columns=["A", "B", "C", "D"],
+        dtype=bool,
     )
     frequent_closed_itemsets = [
-        frozenset(["A", "C"]),
-        frozenset(["B", "C"]),
-        frozenset(["A", "D"]),
-        frozenset(["A", "B", "C"]),
+        frozenset({2}),
+        frozenset({0}),
+        frozenset({0, 2}),
+        frozenset({1, 2}),
+        frozenset({0, 3}),
     ]
+    assert frequent_closed_itemsets == linear_closed_itemsets_miner(membership_matrix)
     assert build_bi_clust(membership_matrix, frequent_closed_itemsets, 2) == [
         set([1]),
         set([2, 3]),

@@ -10,6 +10,7 @@ from sklearn.base import BaseEstimator
 
 from .consensus import consensus_function_10
 from .utils import (
+    build_base_clusterings,
     build_bi_clust,
     build_membership_matrix,
     jaccard_index,
@@ -144,7 +145,8 @@ class MultiCons(BaseEstimator):
         """
 
         if isinstance(X, pd.DataFrame):
-            membership_matrix = X
+            membership_matrix = pd.DataFrame(X, dtype=bool)
+            X = build_base_clusterings(X)
         else:
             X = np.array(X, dtype=int)
             # 2 Calculate in-ensemble similarity
@@ -156,7 +158,7 @@ class MultiCons(BaseEstimator):
         # 5 Sort the FCPs in ascending order according to the size of the instance sets
         frequent_closed_itemsets = linear_closed_itemsets_miner(membership_matrix)
         # 6 MaxDT ← length(BaseClusterings)
-        max_d_t = (membership_matrix.iloc[0]).sum()
+        max_d_t = len(X)
         # 7 BiClust ← {instance sets of FCPs built from MaxDT base clusters}
         bi_clust = build_bi_clust(membership_matrix, frequent_closed_itemsets, max_d_t)
         # 8 Assign a label to each set in BiClust to build the first consensus vector

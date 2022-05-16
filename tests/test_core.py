@@ -7,7 +7,7 @@ from multicons import MultiCons, build_membership_matrix
 from multicons.utils import ensemble_jaccard_score
 
 
-def test_cre_multicons_with_invalid_parameters():
+def test_core_multicons_with_invalid_parameters():
     """Tests that the MultiCons class raises an Exception given invalid parameters."""
 
     with pytest.raises(ValueError, match="Invalid value"):
@@ -47,6 +47,9 @@ def test_core_multicons_without_any_parameters_using_jaccard_similarity():
     membership_value = MultiCons().fit(membership_matrix)
     np.testing.assert_array_equal(
         membership_value.consensus_vectors, value.consensus_vectors
+    )
+    np.testing.assert_array_equal(
+        membership_value.ensemble_similarity, value.ensemble_similarity
     )
 
 

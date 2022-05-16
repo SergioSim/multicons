@@ -97,7 +97,7 @@ cassini_train_data.plot.scatter(
 )
 
 # C-means
-fcm = FCM(n_clusters=3, max_iter=8, m=10)
+fcm = FCM(n_clusters=3, max_iter=5, m=5)
 fcm.fit(cassini_train_data.values)
 base_clusterings.append(fcm.predict(cassini_train_data.values))
 cassini_train_data.plot.scatter(
@@ -111,7 +111,7 @@ cassini_train_data.plot.scatter(
 )
 
 # BIRCH
-birch = Birch(n_clusters=3, threshold=0.7)
+birch = Birch(n_clusters=3, threshold=0.5)
 base_clusterings.append(birch.fit_predict(cassini_train_data))
 cassini_train_data.plot.scatter(
     title="BIRCH", ax=axes[2, 0], c=base_clusterings[-1], **common_kwargs
@@ -204,8 +204,8 @@ cons_tree = consensus.cons_tree()
 cons_tree
 
 # %%
-# Save the graph to a file
+# Save the ConsTree graph to a file
 cons_tree.render(outfile=f"{file_prefix}CassiniConsTree.svg", cleanup=True)
 
 # %% [markdown]
-# The graph in full size: [CassiniConsTree.svg](../CassiniConsTree.svg)
+# View ConsTree graph in full size: [CassiniConsTree.svg](../CassiniConsTree.svg)
