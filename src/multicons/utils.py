@@ -74,6 +74,25 @@ def build_membership_matrix(base_clusterings: np.ndarray) -> pd.DataFrame:
     return pd.DataFrame(np.transpose(res), dtype=bool)
 
 
+def build_base_clusterings(membership_matrix: pd.DataFrame) -> np.ndarray:
+    """Computes and returns the base_clusterings."""
+
+    clusters_count = (membership_matrix.iloc[0]).sum()
+    cluster_size = membership_matrix.shape[0]
+    base_clusterings = np.zeros((clusters_count, cluster_size), dtype=int)
+    column = 0
+    for i in range(clusters_count):
+        items_count = 0
+        label = 0
+        while items_count < cluster_size:
+            items = np.nonzero(membership_matrix.iloc[:, column].values)[0]
+            base_clusterings[i][items] = label
+            items_count += items.size
+            column += 1
+            label += 1
+    return base_clusterings
+
+
 def build_bi_clust(
     membership_matrix: pd.DataFrame,
     frequent_closed_itemsets: list[frozenset],
@@ -86,7 +105,7 @@ def build_bi_clust(
     for itemset in itemsets:
         consensus = np.ones(len(membership_matrix), dtype=bool)
         for partition in itemset:
-            consensus = consensus & membership_matrix[partition]
+            consensus = consensus & membership_matrix.iloc[:, partition]
         result.append(set(consensus[consensus].index.values))
     return result
 
