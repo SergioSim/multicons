@@ -22,3 +22,12 @@ from multicons import (
         - linear_closed_itemsets_miner
     rendering:
         show_root_heading: true
+
+
+```python
+from multicons import consensus_function_10
+```
+
+::: multicons.consensus
+    rendering:
+        show_root_heading: true
