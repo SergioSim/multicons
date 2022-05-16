@@ -71,7 +71,7 @@ def build_membership_matrix(base_clusterings: np.ndarray) -> pd.DataFrame:
     res = []
     for clusters in base_clusterings:
         res += [clusters == x for x in np.unique(clusters)]
-    return pd.DataFrame(np.transpose(res), dtype=int)
+    return pd.DataFrame(np.transpose(res), dtype=bool)
 
 
 def build_bi_clust(

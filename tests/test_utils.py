@@ -24,6 +24,7 @@ def test_utils_build_membership_matrix():
             [0, 1, 1, 0, 0, 0, 1],
         ],
         columns=list(range(7)),
+        dtype=bool,
     )
     pd.testing.assert_frame_equal(value, expected)
 
@@ -48,6 +49,7 @@ def test_utils_build_membership_matrix():
             [0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
         ],
         columns=list(range(13)),
+        dtype=bool,
     )
     pd.testing.assert_frame_equal(value, expected)
 

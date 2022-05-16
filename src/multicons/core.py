@@ -156,7 +156,7 @@ class MultiCons(BaseEstimator):
         # 5 Sort the FCPs in ascending order according to the size of the instance sets
         frequent_closed_itemsets = linear_closed_itemsets_miner(membership_matrix)
         # 6 MaxDT ← length(BaseClusterings)
-        max_d_t = (membership_matrix.iloc[0] == 1).sum()
+        max_d_t = (membership_matrix.iloc[0]).sum()
         # 7 BiClust ← {instance sets of FCPs built from MaxDT base clusters}
         bi_clust = build_bi_clust(membership_matrix, frequent_closed_itemsets, max_d_t)
         # 8 Assign a label to each set in BiClust to build the first consensus vector
