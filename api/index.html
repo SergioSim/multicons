@@ -352,6 +352,26 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#multicons.consensus" class="md-nav__link">
+    consensus
+  </a>
+  
+    <nav class="md-nav" aria-label="consensus">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multicons.consensus.consensus_function_10" class="md-nav__link">
+    consensus_function_10()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -522,6 +542,26 @@
           <li class="md-nav__item">
   <a href="#multicons.utils.linear_closed_itemsets_miner" class="md-nav__link">
     linear_closed_itemsets_miner()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multicons.consensus" class="md-nav__link">
+    consensus
+  </a>
+  
+    <nav class="md-nav" aria-label="consensus">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multicons.consensus.consensus_function_10" class="md-nav__link">
+    consensus_function_10()
   </a>
   
 </li>
@@ -853,7 +893,8 @@ and not one of the allowed string values (mentioned above).</p></td>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-            <span class="n">membership_matrix</span> <span class="o">=</span> <span class="n">X</span>
+            <span class="n">membership_matrix</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">build_base_clusterings</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
             <span class="c1"># 2 Calculate in-ensemble similarity</span>
@@ -865,7 +906,7 @@ and not one of the allowed string values (mentioned above).</p></td>
         <span class="c1"># 5 Sort the FCPs in ascending order according to the size of the instance sets</span>
         <span class="n">frequent_closed_itemsets</span> <span class="o">=</span> <span class="n">linear_closed_itemsets_miner</span><span class="p">(</span><span class="n">membership_matrix</span><span class="p">)</span>
         <span class="c1"># 6 MaxDT ← length(BaseClusterings)</span>
-        <span class="n">max_d_t</span> <span class="o">=</span> <span class="p">(</span><span class="n">membership_matrix</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">max_d_t</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="c1"># 7 BiClust ← {instance sets of FCPs built from MaxDT base clusters}</span>
         <span class="n">bi_clust</span> <span class="o">=</span> <span class="n">build_bi_clust</span><span class="p">(</span><span class="n">membership_matrix</span><span class="p">,</span> <span class="n">frequent_closed_itemsets</span><span class="p">,</span> <span class="n">max_d_t</span><span class="p">)</span>
         <span class="c1"># 8 Assign a label to each set in BiClust to build the first consensus vector</span>
@@ -1261,7 +1302,8 @@ convention.</p></td>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-        <span class="n">membership_matrix</span> <span class="o">=</span> <span class="n">X</span>
+        <span class="n">membership_matrix</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">build_base_clusterings</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
         <span class="c1"># 2 Calculate in-ensemble similarity</span>
@@ -1273,7 +1315,7 @@ convention.</p></td>
     <span class="c1"># 5 Sort the FCPs in ascending order according to the size of the instance sets</span>
     <span class="n">frequent_closed_itemsets</span> <span class="o">=</span> <span class="n">linear_closed_itemsets_miner</span><span class="p">(</span><span class="n">membership_matrix</span><span class="p">)</span>
     <span class="c1"># 6 MaxDT ← length(BaseClusterings)</span>
-    <span class="n">max_d_t</span> <span class="o">=</span> <span class="p">(</span><span class="n">membership_matrix</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">max_d_t</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
     <span class="c1"># 7 BiClust ← {instance sets of FCPs built from MaxDT base clusters}</span>
     <span class="n">bi_clust</span> <span class="o">=</span> <span class="n">build_bi_clust</span><span class="p">(</span><span class="n">membership_matrix</span><span class="p">,</span> <span class="n">frequent_closed_itemsets</span><span class="p">,</span> <span class="n">max_d_t</span><span class="p">)</span>
     <span class="c1"># 8 Assign a label to each set in BiClust to build the first consensus vector</span>
@@ -1423,7 +1465,7 @@ convention.</p></td>
     <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">clusters</span> <span class="ow">in</span> <span class="n">base_clusterings</span><span class="p">:</span>
         <span class="n">res</span> <span class="o">+=</span> <span class="p">[</span><span class="n">clusters</span> <span class="o">==</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">clusters</span><span class="p">)]</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">res</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">res</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -1500,6 +1542,100 @@ convention.</p></td>
         <span class="n">transactions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">membership_matrix</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
     <span class="n">frequent_closed_itemsets</span> <span class="o">=</span> <span class="n">eclat</span><span class="p">(</span><span class="n">transactions</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">supp</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">algo</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">conf</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">frequent_closed_itemsets</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+<pre><code class="language-python">from multicons import consensus_function_10
+</code></pre>
+
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h2 id="multicons.consensus" class="doc doc-heading">
+        <code>multicons.consensus</code>
+
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <p>Consensus functions definitions.</p>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="multicons.consensus.consensus_function_10" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">consensus_function_10</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Returns a modified bi_clust (set of unique instance sets).</p>
+
+        <details class="quote">
+          <summary>Source code in <code>multicons/consensus.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">consensus_function_10</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">set</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Returns a modified bi_clust (set of unique instance sets).&quot;&quot;&quot;</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">count</span><span class="p">:</span>
+        <span class="n">bi_clust_i</span> <span class="o">=</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">count</span><span class="p">:</span>
+            <span class="n">bi_clust_j</span> <span class="o">=</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">intersection_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bi_clust_i</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">bi_clust_j</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">intersection_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">intersection_size</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">bi_clust_i</span><span class="p">):</span>
+                <span class="c1"># Bi⊂Bj</span>
+                <span class="k">del</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">count</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="n">i</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">intersection_size</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">bi_clust_j</span><span class="p">):</span>
+                <span class="c1"># Bj⊂Bi</span>
+                <span class="k">del</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+                <span class="n">count</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="k">continue</span>
+            <span class="n">bi_clust</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">bi_clust_i</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">bi_clust_j</span><span class="p">)</span>
+            <span class="k">del</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">count</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="n">i</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">break</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 </code></pre></div>
         </details>
     </div>
