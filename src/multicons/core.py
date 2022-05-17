@@ -8,7 +8,7 @@ import pandas as pd
 from scipy.optimize import linear_sum_assignment
 from sklearn.base import BaseEstimator
 
-from .consensus import consensus_function_10
+from .consensus import consensus_function_10, consensus_function_12
 from .utils import (
     build_base_clusterings,
     build_bi_clust,
@@ -30,32 +30,42 @@ class MultiCons(BaseEstimator):
             consensus function to generate clusters from the available instance sets at
             each iteration.
             Currently the following consensus functions are available:
-                 - `consensus_function_10`: The simplest approach, *used by default*.
-                    Removes instance sets with inclusion property and groups together
-                    intersecting instance sets.
+
+            - `consensus_function_10`: The simplest approach, *used by default*.
+                Removes instance sets with inclusion property and groups together
+                intersecting instance sets.
+            - `consensus_function_12`: Similar to `consensus_function_10`. Uses a
+                `merging_threshold` to decide whether to group together intersecting
+                instance sets or to split them (removing the intersection from the
+                bigger set).
+
             To use another consensus function it is possible to pass a function instead
-            of a string value. The function should accept one argument - a list of sets,
-            and should update its values in place. See `consensus_function_10` for an
-            example.
+            of a string value. The function should accept two arguments - a list of sets
+            and an optional `merging_threshold`, and should update the list of sets in
+            place. See `consensus_function_10` for an example.
         similarity_measure (str or function): Specifies how to compute the similarity
             between two clustering solutions.
             Currently the following similarity measures are available:
-                - `JaccardSimilarity`: Indicates that the pair-wise jaccard similarity
-                    measure should be used. This measure is computed with the formula
-                    `yy / (yy + ny + yn)`
-                    Where:
-                        `yy` is number of times two points belong to same cluster in
-                            both clusterings.
-                        `ny` and `yn` are the number of times two points belong to the
-                            same cluster in one clustering but not in the other.
-                - `JaccardIndex`: Indicates that the set-wise jaccard similarity
-                coefficient should be used. This measure is computed with the formula
-                `|X ∩ Y| / (|X| + |Y| - |X ∩ Y|)`
+
+            - `JaccardSimilarity`: Indicates that the pair-wise jaccard similarity
+                measure should be used. This measure is computed with the formula
+                `yy / (yy + ny + yn)`
+                Where: `yy` is number of times two points belong to same cluster in both
+                clusterings and `ny` and `yn` are the number of times two points belong
+                to the same cluster in one clustering but not in the other.
+            - `JaccardIndex`: Indicates that the set-wise jaccard similarity
+                coefficient should be used. This measure is computed with the
+                formula `|X ∩ Y| / (|X| + |Y| - |X ∩ Y|)`
                 Where: X and Y are the clustering solutions.
+
             To use another similarity measure it is possible to pass a function instead
             of a string value. The function should accept two arguments - two numeric
             numpy arrays (representing the two clustering solutions) and should return a
             numeric score (indicating how similar the clustering solutions are).
+        merging_threshold (float): Specifies the minimum required ratio (calculated from
+            the intersection between two sets over the size of the smaller set) for
+            which the `consensus_function` should merge two sets. Only applies to
+            `consensus_function_12`.
         optimize_label_names (bool): Indicates whether the label assignment of
             the clustering partitions should be optimized to maximize the similarity
             measure score (using the Hungarian algorithm). By default set to `False` as
@@ -94,6 +104,7 @@ class MultiCons(BaseEstimator):
 
     _consensus_functions = {
         "consensus_function_10": consensus_function_10,
+        "consensus_function_12": consensus_function_12,
     }
     _similarity_measures = {
         "JaccardSimilarity": jaccard_similarity,
@@ -105,6 +116,7 @@ class MultiCons(BaseEstimator):
         consensus_function: Union[
             Literal["consensus_function_10"], Callable[[list[np.ndarray]], None]
         ] = "consensus_function_10",
+        merging_threshold: float = 0.5,
         similarity_measure: Union[
             Literal["JaccardSimilarity", "JaccardIndex"],
             Callable[[np.ndarray, np.ndarray], int],
@@ -119,6 +131,7 @@ class MultiCons(BaseEstimator):
         self.similarity_measure = self._parse_argument(
             "similarity_measure", self._similarity_measures, similarity_measure
         )
+        self.merging_threshold = merging_threshold
         self.optimize_label_names = optimize_label_names
         self.consensus_vectors = None
         self.decision_thresholds = None
@@ -172,7 +185,7 @@ class MultiCons(BaseEstimator):
             # 11 BiClust ← BiClust ∪ {instance sets of FCPs built from DT base clusters}
             bi_clust += build_bi_clust(membership_matrix, frequent_closed_itemsets, d_t)
             # 12 Call the consensus function (Algo. 10)
-            self.consensus_function(bi_clust)
+            self.consensus_function(bi_clust, self.merging_threshold)
             # 13 Assign a label to each set in BiClust to build a consensus vector
             #    and add it to ConsVctrs
             self.consensus_vectors[d_t - 1] = self._assign_labels(bi_clust, X)

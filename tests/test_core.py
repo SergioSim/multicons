@@ -29,8 +29,8 @@ def test_core_multicons_without_any_parameters_using_jaccard_similarity():
         [
             np.array([0, 0, 0, 0, 0, 0, 0, 0, 0]),
             np.array([0, 0, 0, 1, 1, 1, 1, 1, 1]),
-            np.array([0, 0, 0, 2, 2, 2, 2, 1, 1]),
-            np.array([1, 1, 1, 0, 0, 2, 2, 3, 3]),
+            np.array([1, 1, 1, 2, 2, 2, 2, 0, 0]),
+            np.array([3, 3, 3, 0, 0, 1, 1, 2, 2]),
         ]
     )
     np.testing.assert_array_equal(value.consensus_vectors, expected_consensus)
@@ -105,8 +105,8 @@ def test_core_multicons_with_ensemble_jaccard_score_similarity_measure():
         [
             np.array([0, 0, 0, 0, 0, 0, 0, 0, 0]),
             np.array([0, 0, 0, 1, 1, 1, 1, 1, 1]),
-            np.array([0, 0, 0, 2, 2, 2, 2, 1, 1]),
-            np.array([1, 1, 1, 0, 0, 2, 2, 3, 3]),
+            np.array([1, 1, 1, 2, 2, 2, 2, 0, 0]),
+            np.array([3, 3, 3, 0, 0, 1, 1, 2, 2]),
         ]
     )
     expected_similarity = np.array([[0.55555556, 0.82666667, 0.80666667, 0.65]])
@@ -116,6 +116,27 @@ def test_core_multicons_with_ensemble_jaccard_score_similarity_measure():
     assert value.tree_quality == 1
     np.testing.assert_array_equal(value.decision_thresholds, np.array([1, 2, 4, 5]))
     np.testing.assert_array_equal(value.stability, np.array([1, 1, 2, 1]))
+
+
+def test_core_multicons_with_consensus_function_12():
+    """Tests the MultiCons class using the `consensus_function_12`."""
+
+    base_clusterings = [
+        np.array([1, 1, 1, 1, 2, 2, 2, 2, 2]),
+        np.array([1, 1, 1, 2, 2, 2, 2, 2, 2]),
+        np.array([1, 1, 1, 1, 1, 2, 2, 2, 2]),
+        np.array([2, 2, 2, 2, 2, 1, 1, 2, 2]),
+        np.array([2, 2, 1, 1, 1, 1, 1, 1, 1]),
+    ]
+    value = MultiCons(consensus_function="consensus_function_12").fit(base_clusterings)
+    expected_consensus = np.array(
+        [
+            np.array([0, 0, 0, 0, 0, 0, 0, 0, 0]),
+            np.array([1, 1, 0, 0, 0, 2, 2, 2, 2]),
+            np.array([4, 4, 2, 1, 0, 5, 5, 3, 3]),
+        ]
+    )
+    np.testing.assert_array_equal(value.consensus_vectors, expected_consensus)
 
 
 def test_core_multicons_cons_tree():
@@ -152,12 +173,12 @@ def test_core_multicons_cons_tree():
         '\t\tlegend_1 [label="DT=2 ST=1 Similarity=0.67"]',
         "\t\tlegend_0 -> legend_1",
         "\t}",
-        "\tnode [fillcolor=darkseagreen shape=box style=filled width=3]",
-        "\t20 [label=3]",
-        "\t10 -> 20",
         "\tnode [fillcolor=darkseagreen shape=box style=filled width=2]",
-        "\t21 [label=2]",
-        "\t11 -> 21",
+        "\t20 [label=2]",
+        "\t11 -> 20",
+        "\tnode [fillcolor=darkseagreen shape=box style=filled width=3]",
+        "\t21 [label=3]",
+        "\t10 -> 21",
         "\tnode [fillcolor=darkseagreen shape=box style=filled width=4]",
         "\t22 [label=4]",
         "\t11 -> 22",
@@ -170,14 +191,14 @@ def test_core_multicons_cons_tree():
         "\tnode [fillcolor=slategray2 shape=ellipse style=filled width=2]",
         "\t30 [label=2]",
         "\t22 -> 30",
-        "\tnode [fillcolor=slategray2 shape=ellipse style=filled width=3]",
-        "\t31 [label=3]",
-        "\t20 -> 31",
+        "\tnode [fillcolor=slategray2 shape=ellipse style=filled width=2]",
+        "\t31 [label=2]",
+        "\t22 -> 31",
         "\tnode [fillcolor=slategray2 shape=ellipse style=filled width=2]",
         "\t32 [label=2]",
-        "\t22 -> 32",
-        "\tnode [fillcolor=slategray2 shape=ellipse style=filled width=2]",
-        "\t33 [label=2]",
+        "\t20 -> 32",
+        "\tnode [fillcolor=slategray2 shape=ellipse style=filled width=3]",
+        "\t33 [label=3]",
         "\t21 -> 33",
         "\tsubgraph cluster {",
         "\t\tgraph [label=Legend]",
