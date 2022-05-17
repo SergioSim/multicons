@@ -367,6 +367,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#multicons.consensus.consensus_function_12" class="md-nav__link">
+    consensus_function_12()
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -566,6 +573,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#multicons.consensus.consensus_function_12" class="md-nav__link">
+    consensus_function_12()
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -630,14 +644,20 @@ mining technique to find similarities in the base clustering solutions.</p>
         <td><p>Specifies a
 consensus function to generate clusters from the available instance sets at
 each iteration.
-Currently the following consensus functions are available:
-     - <code>consensus_function_10</code>: The simplest approach, <em>used by default</em>.
-        Removes instance sets with inclusion property and groups together
-        intersecting instance sets.
-To use another consensus function it is possible to pass a function instead
-of a string value. The function should accept one argument - a list of sets,
-and should update its values in place. See <code>consensus_function_10</code> for an
-example.</p></td>
+Currently the following consensus functions are available:</p>
+<ul>
+<li><code>consensus_function_10</code>: The simplest approach, <em>used by default</em>.
+    Removes instance sets with inclusion property and groups together
+    intersecting instance sets.</li>
+<li><code>consensus_function_12</code>: Similar to <code>consensus_function_10</code>. Uses a
+    <code>merging_threshold</code> to decide whether to group together intersecting
+    instance sets or to split them (removing the intersection from the
+    bigger set).</li>
+</ul>
+<p>To use another consensus function it is possible to pass a function instead
+of a string value. The function should accept two arguments - a list of sets
+and an optional <code>merging_threshold</code>, and should update the list of sets in
+place. See <code>consensus_function_10</code> for an example.</p></td>
         <td><code>&#39;consensus_function_10&#39;</code></td>
       </tr>
       <tr>
@@ -645,24 +665,33 @@ example.</p></td>
         <td><code>str or function</code></td>
         <td><p>Specifies how to compute the similarity
 between two clustering solutions.
-Currently the following similarity measures are available:
-    - <code>JaccardSimilarity</code>: Indicates that the pair-wise jaccard similarity
-        measure should be used. This measure is computed with the formula
-        <code>yy / (yy + ny + yn)</code>
-        Where:
-            <code>yy</code> is number of times two points belong to same cluster in
-                both clusterings.
-            <code>ny</code> and <code>yn</code> are the number of times two points belong to the
-                same cluster in one clustering but not in the other.
-    - <code>JaccardIndex</code>: Indicates that the set-wise jaccard similarity
-    coefficient should be used. This measure is computed with the formula
-    <code>|X ∩ Y| / (|X| + |Y| - |X ∩ Y|)</code>
-    Where: X and Y are the clustering solutions.
-To use another similarity measure it is possible to pass a function instead
+Currently the following similarity measures are available:</p>
+<ul>
+<li><code>JaccardSimilarity</code>: Indicates that the pair-wise jaccard similarity
+    measure should be used. This measure is computed with the formula
+    <code>yy / (yy + ny + yn)</code>
+    Where: <code>yy</code> is number of times two points belong to same cluster in both
+    clusterings and <code>ny</code> and <code>yn</code> are the number of times two points belong
+    to the same cluster in one clustering but not in the other.</li>
+<li><code>JaccardIndex</code>: Indicates that the set-wise jaccard similarity
+    coefficient should be used. This measure is computed with the
+    formula <code>|X ∩ Y| / (|X| + |Y| - |X ∩ Y|)</code>
+    Where: X and Y are the clustering solutions.</li>
+</ul>
+<p>To use another similarity measure it is possible to pass a function instead
 of a string value. The function should accept two arguments - two numeric
 numpy arrays (representing the two clustering solutions) and should return a
 numeric score (indicating how similar the clustering solutions are).</p></td>
         <td><code>&#39;JaccardSimilarity&#39;</code></td>
+      </tr>
+      <tr>
+        <td><code>merging_threshold</code></td>
+        <td><code>float</code></td>
+        <td><p>Specifies the minimum required ratio (calculated from
+the intersection between two sets over the size of the smaller set) for
+which the <code>consensus_function</code> should merge two sets. Only applies to
+<code>consensus_function_12</code>.</p></td>
+        <td><code>0.5</code></td>
       </tr>
       <tr>
         <td><code>optimize_label_names</code></td>
@@ -778,32 +807,42 @@ and not one of the allowed string values (mentioned above).</p></td>
 <span class="sd">            consensus function to generate clusters from the available instance sets at</span>
 <span class="sd">            each iteration.</span>
 <span class="sd">            Currently the following consensus functions are available:</span>
-<span class="sd">                 - `consensus_function_10`: The simplest approach, *used by default*.</span>
-<span class="sd">                    Removes instance sets with inclusion property and groups together</span>
-<span class="sd">                    intersecting instance sets.</span>
+
+<span class="sd">            - `consensus_function_10`: The simplest approach, *used by default*.</span>
+<span class="sd">                Removes instance sets with inclusion property and groups together</span>
+<span class="sd">                intersecting instance sets.</span>
+<span class="sd">            - `consensus_function_12`: Similar to `consensus_function_10`. Uses a</span>
+<span class="sd">                `merging_threshold` to decide whether to group together intersecting</span>
+<span class="sd">                instance sets or to split them (removing the intersection from the</span>
+<span class="sd">                bigger set).</span>
+
 <span class="sd">            To use another consensus function it is possible to pass a function instead</span>
-<span class="sd">            of a string value. The function should accept one argument - a list of sets,</span>
-<span class="sd">            and should update its values in place. See `consensus_function_10` for an</span>
-<span class="sd">            example.</span>
+<span class="sd">            of a string value. The function should accept two arguments - a list of sets</span>
+<span class="sd">            and an optional `merging_threshold`, and should update the list of sets in</span>
+<span class="sd">            place. See `consensus_function_10` for an example.</span>
 <span class="sd">        similarity_measure (str or function): Specifies how to compute the similarity</span>
 <span class="sd">            between two clustering solutions.</span>
 <span class="sd">            Currently the following similarity measures are available:</span>
-<span class="sd">                - `JaccardSimilarity`: Indicates that the pair-wise jaccard similarity</span>
-<span class="sd">                    measure should be used. This measure is computed with the formula</span>
-<span class="sd">                    `yy / (yy + ny + yn)`</span>
-<span class="sd">                    Where:</span>
-<span class="sd">                        `yy` is number of times two points belong to same cluster in</span>
-<span class="sd">                            both clusterings.</span>
-<span class="sd">                        `ny` and `yn` are the number of times two points belong to the</span>
-<span class="sd">                            same cluster in one clustering but not in the other.</span>
-<span class="sd">                - `JaccardIndex`: Indicates that the set-wise jaccard similarity</span>
-<span class="sd">                coefficient should be used. This measure is computed with the formula</span>
-<span class="sd">                `|X ∩ Y| / (|X| + |Y| - |X ∩ Y|)`</span>
+
+<span class="sd">            - `JaccardSimilarity`: Indicates that the pair-wise jaccard similarity</span>
+<span class="sd">                measure should be used. This measure is computed with the formula</span>
+<span class="sd">                `yy / (yy + ny + yn)`</span>
+<span class="sd">                Where: `yy` is number of times two points belong to same cluster in both</span>
+<span class="sd">                clusterings and `ny` and `yn` are the number of times two points belong</span>
+<span class="sd">                to the same cluster in one clustering but not in the other.</span>
+<span class="sd">            - `JaccardIndex`: Indicates that the set-wise jaccard similarity</span>
+<span class="sd">                coefficient should be used. This measure is computed with the</span>
+<span class="sd">                formula `|X ∩ Y| / (|X| + |Y| - |X ∩ Y|)`</span>
 <span class="sd">                Where: X and Y are the clustering solutions.</span>
+
 <span class="sd">            To use another similarity measure it is possible to pass a function instead</span>
 <span class="sd">            of a string value. The function should accept two arguments - two numeric</span>
 <span class="sd">            numpy arrays (representing the two clustering solutions) and should return a</span>
 <span class="sd">            numeric score (indicating how similar the clustering solutions are).</span>
+<span class="sd">        merging_threshold (float): Specifies the minimum required ratio (calculated from</span>
+<span class="sd">            the intersection between two sets over the size of the smaller set) for</span>
+<span class="sd">            which the `consensus_function` should merge two sets. Only applies to</span>
+<span class="sd">            `consensus_function_12`.</span>
 <span class="sd">        optimize_label_names (bool): Indicates whether the label assignment of</span>
 <span class="sd">            the clustering partitions should be optimized to maximize the similarity</span>
 <span class="sd">            measure score (using the Hungarian algorithm). By default set to `False` as</span>
@@ -842,6 +881,7 @@ and not one of the allowed string values (mentioned above).</p></td>
 
     <span class="n">_consensus_functions</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;consensus_function_10&quot;</span><span class="p">:</span> <span class="n">consensus_function_10</span><span class="p">,</span>
+        <span class="s2">&quot;consensus_function_12&quot;</span><span class="p">:</span> <span class="n">consensus_function_12</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="n">_similarity_measures</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;JaccardSimilarity&quot;</span><span class="p">:</span> <span class="n">jaccard_similarity</span><span class="p">,</span>
@@ -853,6 +893,7 @@ and not one of the allowed string values (mentioned above).</p></td>
         <span class="n">consensus_function</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
             <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;consensus_function_10&quot;</span><span class="p">],</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]],</span> <span class="kc">None</span><span class="p">]</span>
         <span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;consensus_function_10&quot;</span><span class="p">,</span>
+        <span class="n">merging_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
         <span class="n">similarity_measure</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
             <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;JaccardSimilarity&quot;</span><span class="p">,</span> <span class="s2">&quot;JaccardIndex&quot;</span><span class="p">],</span>
             <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">int</span><span class="p">],</span>
@@ -867,6 +908,7 @@ and not one of the allowed string values (mentioned above).</p></td>
         <span class="bp">self</span><span class="o">.</span><span class="n">similarity_measure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_argument</span><span class="p">(</span>
             <span class="s2">&quot;similarity_measure&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_similarity_measures</span><span class="p">,</span> <span class="n">similarity_measure</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">merging_threshold</span> <span class="o">=</span> <span class="n">merging_threshold</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimize_label_names</span> <span class="o">=</span> <span class="n">optimize_label_names</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">consensus_vectors</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">decision_thresholds</span> <span class="o">=</span> <span class="kc">None</span>
@@ -920,7 +962,7 @@ and not one of the allowed string values (mentioned above).</p></td>
             <span class="c1"># 11 BiClust ← BiClust ∪ {instance sets of FCPs built from DT base clusters}</span>
             <span class="n">bi_clust</span> <span class="o">+=</span> <span class="n">build_bi_clust</span><span class="p">(</span><span class="n">membership_matrix</span><span class="p">,</span> <span class="n">frequent_closed_itemsets</span><span class="p">,</span> <span class="n">d_t</span><span class="p">)</span>
             <span class="c1"># 12 Call the consensus function (Algo. 10)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">consensus_function</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">consensus_function</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">merging_threshold</span><span class="p">)</span>
             <span class="c1"># 13 Assign a label to each set in BiClust to build a consensus vector</span>
             <span class="c1">#    and add it to ConsVctrs</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">consensus_vectors</span><span class="p">[</span><span class="n">d_t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_assign_labels</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
@@ -1100,7 +1142,7 @@ and not one of the allowed string values (mentioned above).</p></td>
 
 
 <h3 id="multicons.core.MultiCons.__init__" class="doc doc-heading">
-<code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consensus_function</span><span class="o">=</span><span class="s1">&#39;consensus_function_10&#39;</span><span class="p">,</span> <span class="n">similarity_measure</span><span class="o">=</span><span class="s1">&#39;JaccardSimilarity&#39;</span><span class="p">,</span> <span class="n">optimize_label_names</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consensus_function</span><span class="o">=</span><span class="s1">&#39;consensus_function_10&#39;</span><span class="p">,</span> <span class="n">merging_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">similarity_measure</span><span class="o">=</span><span class="s1">&#39;JaccardSimilarity&#39;</span><span class="p">,</span> <span class="n">optimize_label_names</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-special"><code>special</code></small>
@@ -1119,6 +1161,7 @@ and not one of the allowed string values (mentioned above).</p></td>
     <span class="n">consensus_function</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
         <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;consensus_function_10&quot;</span><span class="p">],</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]],</span> <span class="kc">None</span><span class="p">]</span>
     <span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;consensus_function_10&quot;</span><span class="p">,</span>
+    <span class="n">merging_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
     <span class="n">similarity_measure</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
         <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;JaccardSimilarity&quot;</span><span class="p">,</span> <span class="s2">&quot;JaccardIndex&quot;</span><span class="p">],</span>
         <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">int</span><span class="p">],</span>
@@ -1133,6 +1176,7 @@ and not one of the allowed string values (mentioned above).</p></td>
     <span class="bp">self</span><span class="o">.</span><span class="n">similarity_measure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_argument</span><span class="p">(</span>
         <span class="s2">&quot;similarity_measure&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_similarity_measures</span><span class="p">,</span> <span class="n">similarity_measure</span>
     <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">merging_threshold</span> <span class="o">=</span> <span class="n">merging_threshold</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">optimize_label_names</span> <span class="o">=</span> <span class="n">optimize_label_names</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">consensus_vectors</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">decision_thresholds</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1329,7 +1373,7 @@ convention.</p></td>
         <span class="c1"># 11 BiClust ← BiClust ∪ {instance sets of FCPs built from DT base clusters}</span>
         <span class="n">bi_clust</span> <span class="o">+=</span> <span class="n">build_bi_clust</span><span class="p">(</span><span class="n">membership_matrix</span><span class="p">,</span> <span class="n">frequent_closed_itemsets</span><span class="p">,</span> <span class="n">d_t</span><span class="p">)</span>
         <span class="c1"># 12 Call the consensus function (Algo. 10)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">consensus_function</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">consensus_function</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">merging_threshold</span><span class="p">)</span>
         <span class="c1"># 13 Assign a label to each set in BiClust to build a consensus vector</span>
         <span class="c1">#    and add it to ConsVctrs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">consensus_vectors</span><span class="p">[</span><span class="n">d_t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_assign_labels</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
@@ -1594,7 +1638,7 @@ convention.</p></td>
 
 
 <h3 id="multicons.consensus.consensus_function_10" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">consensus_function_10</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">consensus_function_10</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">,</span> <span class="n">merging_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -1605,12 +1649,12 @@ convention.</p></td>
 
         <details class="quote">
           <summary>Source code in <code>multicons/consensus.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">consensus_function_10</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">set</span><span class="p">]):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">consensus_function_10</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">set</span><span class="p">],</span> <span class="n">merging_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns a modified bi_clust (set of unique instance sets).&quot;&quot;&quot;</span>
 
     <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">)</span>
-    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">count</span><span class="p">:</span>
+    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">bi_clust_i</span> <span class="o">=</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="n">j</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="k">while</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">count</span><span class="p">:</span>
@@ -1633,6 +1677,76 @@ convention.</p></td>
             <span class="n">bi_clust</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">bi_clust_i</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">bi_clust_j</span><span class="p">)</span>
             <span class="k">del</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="n">count</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="n">i</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">break</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="multicons.consensus.consensus_function_12" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">consensus_function_12</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">,</span> <span class="n">merging_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Returns a modified bi_clust (set of unique instance sets).</p>
+
+        <details class="quote">
+          <summary>Source code in <code>multicons/consensus.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">consensus_function_12</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">set</span><span class="p">],</span> <span class="n">merging_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns a modified bi_clust (set of unique instance sets).&quot;&quot;&quot;</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">bi_clust_i</span> <span class="o">=</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">bi_clust_i_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bi_clust_i</span><span class="p">)</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">count</span><span class="p">:</span>
+            <span class="n">bi_clust_j</span> <span class="o">=</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">bi_clust_j_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bi_clust_j</span><span class="p">)</span>
+            <span class="n">bi_clust_intersection</span> <span class="o">=</span> <span class="n">bi_clust_i</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">bi_clust_j</span><span class="p">)</span>
+            <span class="n">intersection_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bi_clust_intersection</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">intersection_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">intersection_size</span> <span class="o">==</span> <span class="n">bi_clust_i_size</span><span class="p">:</span>
+                <span class="c1"># Bi⊂Bj</span>
+                <span class="k">del</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">count</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="n">i</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">intersection_size</span> <span class="o">==</span> <span class="n">bi_clust_j_size</span><span class="p">:</span>
+                <span class="c1"># Bj⊂Bi</span>
+                <span class="k">del</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+                <span class="n">count</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">intersection_size</span> <span class="o">&gt;=</span> <span class="n">bi_clust_i_size</span> <span class="o">*</span> <span class="n">merging_threshold</span>
+                <span class="ow">or</span> <span class="n">intersection_size</span> <span class="o">&gt;=</span> <span class="n">bi_clust_j_size</span> <span class="o">*</span> <span class="n">merging_threshold</span>
+            <span class="p">):</span>
+                <span class="c1"># Merge intersecting sets (Bj∩Bi / |Bi| &gt; MT or Bj∩Bi / |Bj| &gt; MT)</span>
+                <span class="n">bi_clust</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">bi_clust_i</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">bi_clust_j</span><span class="p">)</span>
+                <span class="k">del</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">count</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="n">i</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="k">break</span>
+            <span class="c1"># Split intersecting sets (remove intersection from bigger set)</span>
+            <span class="k">if</span> <span class="n">bi_clust_i_size</span> <span class="o">&lt;=</span> <span class="n">bi_clust_j_size</span><span class="p">:</span>
+                <span class="n">bi_clust</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">bi_clust_j</span> <span class="o">-</span> <span class="n">bi_clust_intersection</span>
+                <span class="k">continue</span>
+            <span class="n">bi_clust</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">bi_clust_i</span> <span class="o">-</span> <span class="n">bi_clust_intersection</span>
             <span class="n">i</span> <span class="o">-=</span> <span class="mi">1</span>
             <span class="k">break</span>
         <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
