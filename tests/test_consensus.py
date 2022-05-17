@@ -84,7 +84,7 @@ def test_consensus_consensus_function_13(value, expected):
         ([{1, 2}, {1}], [{1, 2}]),
         ([{1, 2}, {1, 2, 3}], [{1, 2, 3}]),
         # Clusters that are intersections with a ratio higher than MT are merged
-        ([{1, 2, 3}, {2, 3, 4}, {5}], [{1, 2, 3}, {4}, {5}]),
+        ([{1, 2, 3}, {2, 3, 4}, {5}], [{1, 2, 3, 4}, {5}]),
         # Clusters that are intersections with a ration lower than MT are split
         ([{1, 2, 3}, {3, 4, 5}, {6}], [{1, 2, 3}, {4, 5}, {6}]),
         ([{1, 2, 3, 4}, {4, 5, 6}, {7}], [{1, 2, 3}, {4, 5, 6}, {7}]),
