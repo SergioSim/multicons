@@ -148,8 +148,8 @@ def test_utils_build_bi_clust():
     assert frequent_closed_itemsets == linear_closed_itemsets_miner(membership_matrix)
     assert build_bi_clust(membership_matrix, frequent_closed_itemsets, 2) == [
         set([1]),
-        set([2, 3]),
         set([0]),
+        set([2, 3]),
     ]
 
 

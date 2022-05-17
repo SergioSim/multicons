@@ -107,6 +107,7 @@ def build_bi_clust(
         for partition in itemset:
             consensus = consensus & membership_matrix.iloc[:, partition]
         result.append(set(consensus[consensus].index.values))
+    result.sort(key=len)
     return result
 
 
