@@ -388,6 +388,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#multicons.consensus.consensus_function_15" class="md-nav__link">
+    consensus_function_15()
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -608,6 +615,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#multicons.consensus.consensus_function_15" class="md-nav__link">
+    consensus_function_15()
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -688,6 +702,9 @@ Currently the following consensus functions are available:</p>
 <li><code>consensus_function_14</code>: A version of <code>consensus_function_13</code> that first
     searches the maximal intersection ratio among all possible intersections
     prior applying a merge or split decision.</li>
+<li><code>consensus_function_15</code>: A graph based approach. Builds an adjacency
+    matrix from the intersection matrix using the <code>decision_threshold</code>.
+    Merges all connected nodes and then splits overlapping instance sets.</li>
 </ul>
 <p>To use another consensus function it is possible to pass a function instead
 of a string value. The function should accept two arguments - a list of sets
@@ -857,6 +874,9 @@ and not one of the allowed string values (mentioned above).</p></td>
 <span class="sd">            - `consensus_function_14`: A version of `consensus_function_13` that first</span>
 <span class="sd">                searches the maximal intersection ratio among all possible intersections</span>
 <span class="sd">                prior applying a merge or split decision.</span>
+<span class="sd">            - `consensus_function_15`: A graph based approach. Builds an adjacency</span>
+<span class="sd">                matrix from the intersection matrix using the `decision_threshold`.</span>
+<span class="sd">                Merges all connected nodes and then splits overlapping instance sets.</span>
 
 <span class="sd">            To use another consensus function it is possible to pass a function instead</span>
 <span class="sd">            of a string value. The function should accept two arguments - a list of sets</span>
@@ -926,6 +946,7 @@ and not one of the allowed string values (mentioned above).</p></td>
         <span class="s2">&quot;consensus_function_12&quot;</span><span class="p">:</span> <span class="n">consensus_function_12</span><span class="p">,</span>
         <span class="s2">&quot;consensus_function_13&quot;</span><span class="p">:</span> <span class="n">consensus_function_13</span><span class="p">,</span>
         <span class="s2">&quot;consensus_function_14&quot;</span><span class="p">:</span> <span class="n">consensus_function_14</span><span class="p">,</span>
+        <span class="s2">&quot;consensus_function_15&quot;</span><span class="p">:</span> <span class="n">consensus_function_15</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="n">_similarity_measures</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;JaccardSimilarity&quot;</span><span class="p">:</span> <span class="n">jaccard_similarity</span><span class="p">,</span>
@@ -940,6 +961,7 @@ and not one of the allowed string values (mentioned above).</p></td>
                 <span class="s2">&quot;consensus_function_12&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;consensus_function_13&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;consensus_function_14&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;consensus_function_15&quot;</span><span class="p">,</span>
             <span class="p">],</span>
             <span class="n">Callable</span><span class="p">[[</span><span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]],</span> <span class="kc">None</span><span class="p">],</span>
         <span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;consensus_function_10&quot;</span><span class="p">,</span>
@@ -1214,6 +1236,7 @@ and not one of the allowed string values (mentioned above).</p></td>
             <span class="s2">&quot;consensus_function_12&quot;</span><span class="p">,</span>
             <span class="s2">&quot;consensus_function_13&quot;</span><span class="p">,</span>
             <span class="s2">&quot;consensus_function_14&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;consensus_function_15&quot;</span><span class="p">,</span>
         <span class="p">],</span>
         <span class="n">Callable</span><span class="p">[[</span><span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]],</span> <span class="kc">None</span><span class="p">],</span>
     <span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;consensus_function_10&quot;</span><span class="p">,</span>
@@ -1904,7 +1927,7 @@ convention.</p></td>
 
 
 <h3 id="multicons.consensus.consensus_function_14" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">consensus_function_14</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">,</span> <span class="n">merging_threshold</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">consensus_function_14</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">,</span> <span class="n">merging_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span></code>
 
 
 </h3>
@@ -1915,7 +1938,7 @@ convention.</p></td>
 
         <details class="quote">
           <summary>Source code in <code>multicons/consensus.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">consensus_function_14</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">set</span><span class="p">],</span> <span class="n">merging_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">consensus_function_14</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">set</span><span class="p">],</span> <span class="n">merging_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns a modified bi_clust (set of unique instance sets).&quot;&quot;&quot;</span>
 
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
@@ -1972,6 +1995,77 @@ convention.</p></td>
             <span class="n">bi_clust</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
             <span class="n">intersection_matrix</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">intersection_matrix</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="multicons.consensus.consensus_function_15" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">consensus_function_15</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">,</span> <span class="n">merging_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Returns a modified bi_clust (set of unique instance sets).</p>
+
+        <details class="quote">
+          <summary>Source code in <code>multicons/consensus.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">consensus_function_15</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">set</span><span class="p">],</span> <span class="n">merging_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns a modified bi_clust (set of unique instance sets).&quot;&quot;&quot;</span>
+
+    <span class="n">_remove_subsets</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">)</span>
+    <span class="n">bi_clust_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">bi_clust_size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">intersection_matrix</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">bi_clust_size</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">bi_clust_size</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">bi_clust_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">bi_clust_i</span> <span class="o">=</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">bi_clust_i_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bi_clust_i</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">bi_clust_size</span><span class="p">):</span>
+            <span class="n">bi_clust_j</span> <span class="o">=</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">bi_clust_j_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bi_clust_j</span><span class="p">)</span>
+            <span class="n">intersection_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bi_clust_i</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">bi_clust_j</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">intersection_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">intersection_matrix</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">intersection_size</span> <span class="o">/</span> <span class="n">bi_clust_i_size</span>
+            <span class="n">intersection_matrix</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">intersection_size</span> <span class="o">/</span> <span class="n">bi_clust_j_size</span>
+
+    <span class="n">cluster_indexes</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">coo_matrix</span><span class="p">(</span><span class="n">intersection_matrix</span> <span class="o">&gt;=</span> <span class="n">merging_threshold</span><span class="p">)</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cluster_indexes</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">cluster_indexes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">index</span><span class="p">]</span>
+        <span class="n">bi_clust</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+
+    <span class="n">_remove_subsets</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">)</span>
+    <span class="n">bi_clust_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">bi_clust_size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">bi_clust_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">bi_clust_i</span> <span class="o">=</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">bi_clust_i_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bi_clust_i</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">bi_clust_size</span><span class="p">):</span>
+            <span class="n">bi_clust_j</span> <span class="o">=</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">bi_clust_j_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bi_clust_j</span><span class="p">)</span>
+            <span class="n">bi_clust_intersection</span> <span class="o">=</span> <span class="n">bi_clust_i</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">bi_clust_j</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bi_clust_intersection</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">bi_clust_i_size</span> <span class="o">&lt;=</span> <span class="n">bi_clust_j_size</span><span class="p">:</span>
+                <span class="n">bi_clust</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">bi_clust_j</span> <span class="o">-</span> <span class="n">bi_clust_intersection</span>
+                <span class="k">continue</span>
+            <span class="n">bi_clust</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">bi_clust_i</span> <span class="o">-</span> <span class="n">bi_clust_intersection</span>
+
+    <span class="n">_remove_subsets</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
