@@ -13,6 +13,7 @@ from .consensus import (
     consensus_function_12,
     consensus_function_13,
     consensus_function_14,
+    consensus_function_15,
 )
 from .utils import (
     build_base_clusterings,
@@ -50,6 +51,9 @@ class MultiCons(BaseEstimator):
             - `consensus_function_14`: A version of `consensus_function_13` that first
                 searches the maximal intersection ratio among all possible intersections
                 prior applying a merge or split decision.
+            - `consensus_function_15`: A graph based approach. Builds an adjacency
+                matrix from the intersection matrix using the `decision_threshold`.
+                Merges all connected nodes and then splits overlapping instance sets.
 
             To use another consensus function it is possible to pass a function instead
             of a string value. The function should accept two arguments - a list of sets
@@ -119,6 +123,7 @@ class MultiCons(BaseEstimator):
         "consensus_function_12": consensus_function_12,
         "consensus_function_13": consensus_function_13,
         "consensus_function_14": consensus_function_14,
+        "consensus_function_15": consensus_function_15,
     }
     _similarity_measures = {
         "JaccardSimilarity": jaccard_similarity,
@@ -133,6 +138,7 @@ class MultiCons(BaseEstimator):
                 "consensus_function_12",
                 "consensus_function_13",
                 "consensus_function_14",
+                "consensus_function_15",
             ],
             Callable[[list[np.ndarray]], None],
         ] = "consensus_function_10",

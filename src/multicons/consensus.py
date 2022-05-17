@@ -3,6 +3,7 @@
 # pylint: disable=unused-argument
 
 import pandas as pd
+import scipy.sparse as sp
 
 
 def consensus_function_10(bi_clust: list[set], merging_threshold=None):
@@ -179,7 +180,7 @@ def _remove_subsets(bi_clust: list[set]) -> None:
         i += 1
 
 
-def consensus_function_14(bi_clust: list[set], merging_threshold: float = 1):
+def consensus_function_14(bi_clust: list[set], merging_threshold: float = 0.5):
     """Returns a modified bi_clust (set of unique instance sets)."""
 
     while True:
@@ -236,3 +237,52 @@ def consensus_function_14(bi_clust: list[set], merging_threshold: float = 1):
             bi_clust[i] = bi_clust[i] - bi_clust[j]
             intersection_matrix.iloc[i, :] = None
             intersection_matrix.iloc[:, i] = None
+
+
+def consensus_function_15(bi_clust: list[set], merging_threshold: float = 0.5):
+    """Returns a modified bi_clust (set of unique instance sets)."""
+
+    _remove_subsets(bi_clust)
+    bi_clust_size = len(bi_clust)
+    if bi_clust_size == 1:
+        return
+    intersection_matrix = pd.DataFrame(
+        0, columns=range(bi_clust_size), index=range(bi_clust_size), dtype=int
+    )
+    for i in range(bi_clust_size - 1):
+        bi_clust_i = bi_clust[i]
+        bi_clust_i_size = len(bi_clust_i)
+        for j in range(i + 1, bi_clust_size):
+            bi_clust_j = bi_clust[j]
+            bi_clust_j_size = len(bi_clust_j)
+            intersection_size = len(bi_clust_i.intersection(bi_clust_j))
+            if intersection_size == 0:
+                continue
+            intersection_matrix.iloc[i, j] = intersection_size / bi_clust_i_size
+            intersection_matrix.iloc[j, i] = intersection_size / bi_clust_j_size
+
+    cluster_indexes = sp.coo_matrix(intersection_matrix >= merging_threshold).nonzero()
+    for index, i in enumerate(cluster_indexes[0]):
+        j = cluster_indexes[1][index]
+        bi_clust[i] = bi_clust[j] = bi_clust[i].union(bi_clust[j])
+
+    _remove_subsets(bi_clust)
+    bi_clust_size = len(bi_clust)
+    if bi_clust_size == 1:
+        return
+
+    for i in range(bi_clust_size - 1):
+        bi_clust_i = bi_clust[i]
+        bi_clust_i_size = len(bi_clust_i)
+        for j in range(i + 1, bi_clust_size):
+            bi_clust_j = bi_clust[j]
+            bi_clust_j_size = len(bi_clust_j)
+            bi_clust_intersection = bi_clust_i.intersection(bi_clust_j)
+            if len(bi_clust_intersection) == 0:
+                continue
+            if bi_clust_i_size <= bi_clust_j_size:
+                bi_clust[j] = bi_clust_j - bi_clust_intersection
+                continue
+            bi_clust[i] = bi_clust_i - bi_clust_intersection
+
+    _remove_subsets(bi_clust)
