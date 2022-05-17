@@ -6,6 +6,7 @@ from multicons.consensus import (
     consensus_function_10,
     consensus_function_12,
     consensus_function_13,
+    consensus_function_14,
 )
 from multicons.core import MultiCons
 from multicons.utils import (
