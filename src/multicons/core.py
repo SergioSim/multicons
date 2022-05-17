@@ -8,7 +8,11 @@ import pandas as pd
 from scipy.optimize import linear_sum_assignment
 from sklearn.base import BaseEstimator
 
-from .consensus import consensus_function_10, consensus_function_12
+from .consensus import (
+    consensus_function_10,
+    consensus_function_12,
+    consensus_function_13,
+)
 from .utils import (
     build_base_clusterings,
     build_bi_clust,
@@ -35,9 +39,13 @@ class MultiCons(BaseEstimator):
                 Removes instance sets with inclusion property and groups together
                 intersecting instance sets.
             - `consensus_function_12`: Similar to `consensus_function_10`. Uses a
-                `merging_threshold` to decide whether to group together intersecting
-                instance sets or to split them (removing the intersection from the
+                `merging_threshold` to decide whether to merge the intersecting instance
+                sets or to split them (removing the intersection from the
                 bigger set).
+            - `consensus_function_13`: A stricter version of `consensus_function_12`.
+                Compares the maximal average intersection ratio with the
+                `merging_threshold` to decide whether to merge the intersecting instance
+                sets or to split them.
 
             To use another consensus function it is possible to pass a function instead
             of a string value. The function should accept two arguments - a list of sets
@@ -105,6 +113,7 @@ class MultiCons(BaseEstimator):
     _consensus_functions = {
         "consensus_function_10": consensus_function_10,
         "consensus_function_12": consensus_function_12,
+        "consensus_function_13": consensus_function_13,
     }
     _similarity_measures = {
         "JaccardSimilarity": jaccard_similarity,
@@ -114,7 +123,12 @@ class MultiCons(BaseEstimator):
     def __init__(
         self,
         consensus_function: Union[
-            Literal["consensus_function_10"], Callable[[list[np.ndarray]], None]
+            Literal[
+                "consensus_function_10",
+                "consensus_function_12",
+                "consensus_function_13",
+            ],
+            Callable[[list[np.ndarray]], None],
         ] = "consensus_function_10",
         merging_threshold: float = 0.5,
         similarity_measure: Union[
