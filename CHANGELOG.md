@@ -8,8 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.0] - 2022-05-18
+
 ### Added
 
-- Added the MultiCons class
+- Implement the MultiCons class
 
-[unreleased]: https://github.com/SergioSim/multicons
+[unreleased]: https://github.com/SergioSim/multicons/v0.1.0...master
+[0.1.0]: https://github.com/SergioSim/multicons/compare/125c67d...v0.1.0
