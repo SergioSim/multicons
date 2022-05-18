@@ -10,6 +10,6 @@ and this project adheres to
 
 ### Added
 
-- Added the MultiCons and ConsTree methods
+- Added the MultiCons class
 
 [unreleased]: https://github.com/SergioSim/multicons

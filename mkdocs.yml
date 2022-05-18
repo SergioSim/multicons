@@ -21,7 +21,6 @@ theme:
         icon: material/toggle-switch
         name: Switch to light mode
 
-
 markdown_extensions:
     - smarty
 

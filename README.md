@@ -9,6 +9,11 @@ technique to find similarities in the base clustering solutions.
 The implementation aims to follow the original description of the MultiCons method from
 the references below.
 
+# Documentation
+
+To get started, check out some examples or look up the reference API, please visit our
+[documentation page](https://sergiosim.github.io/multicons/).
+
 ## References
 
 Atheer A. "A closed patterns-based approach to the consensus clustering problem".
