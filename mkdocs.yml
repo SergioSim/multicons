@@ -34,7 +34,8 @@ nav:
 
 plugins:
     - search
-    - mkdocstrings
+    - mkdocstrings:
+        default_handler: python
     - mkdocs-jupyter:
         execute: True
         ignore: ["*.ipynb"]
