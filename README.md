@@ -9,7 +9,15 @@ technique to find similarities in the base clustering solutions.
 The implementation aims to follow the original description of the MultiCons method from
 the references below.
 
-# Documentation
+## Installation
+
+MultiCons is available on the Python Package Index (PyPI). It's installable using `pip`:
+
+```bash
+pip install multicons
+```
+
+## Documentation
 
 To get started, check out some examples or look up the reference API, please visit our
 [documentation page](https://sergiosim.github.io/multicons/).
