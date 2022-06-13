@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://SergioSim.github.io/multicons/api/">
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.4">
     
     
       
@@ -23,11 +23,12 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.e411adfe.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.4a0965b7.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.cc9b2e1e.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.cbb835fc.min.css">
         
+      
       
     
     
@@ -285,7 +286,7 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#multicons.core.MultiCons" class="md-nav__link">
+  <a href="#multicons.MultiCons" class="md-nav__link">
     MultiCons
   </a>
   
@@ -512,7 +513,7 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#multicons.core.MultiCons" class="md-nav__link">
+  <a href="#multicons.MultiCons" class="md-nav__link">
     MultiCons
   </a>
   
@@ -650,40 +651,43 @@
 </code></pre>
 
 
-  <div class="doc doc-object doc-class">
+<div class="doc doc-object doc-class">
 
 
 
-<h2 id="multicons.core.MultiCons" class="doc doc-heading">
-        <code>
-multicons.core.MultiCons            (<span title="sklearn.base.BaseEstimator">BaseEstimator</span>)
-        </code>
-
+<h2 id="multicons.MultiCons" class="doc doc-heading">
+        <code>multicons.MultiCons</code>
 
 
 </h2>
 
-    <div class="doc doc-contents first">
 
+  <div class="doc doc-contents first">
+      <p class="doc doc-class-bases">
+        Bases: <code><span title="sklearn.base.BaseEstimator">BaseEstimator</span></code></p>
+
+  
       <p>MultiCons (Multiple Consensus) algorithm.</p>
 <p>MultiCons is a consensus clustering method that uses the frequent closed itemset
 mining technique to find similarities in the base clustering solutions.</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
       <tr>
-        <td><code>consensus_function</code></td>
-        <td><code>str or function</code></td>
-        <td><p>Specifies a
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>consensus_function</code></td>
+          <td>
+                <code>str or function</code>
+          </td>
+          <td><p>Specifies a
 consensus function to generate clusters from the available instance sets at
 each iteration.
 Currently the following consensus functions are available:</p>
@@ -710,12 +714,16 @@ Currently the following consensus functions are available:</p>
 of a string value. The function should accept two arguments - a list of sets
 and an optional <code>merging_threshold</code>, and should update the list of sets in
 place. See <code>consensus_function_10</code> for an example.</p></td>
-        <td><code>&#39;consensus_function_10&#39;</code></td>
-      </tr>
-      <tr>
-        <td><code>similarity_measure</code></td>
-        <td><code>str or function</code></td>
-        <td><p>Specifies how to compute the similarity
+          <td>
+                <code>&#39;consensus_function_10&#39;</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>similarity_measure</code></td>
+          <td>
+                <code>str or function</code>
+          </td>
+          <td><p>Specifies how to compute the similarity
 between two clustering solutions.
 Currently the following similarity measures are available:</p>
 <ul>
@@ -734,121 +742,502 @@ Currently the following similarity measures are available:</p>
 of a string value. The function should accept two arguments - two numeric
 numpy arrays (representing the two clustering solutions) and should return a
 numeric score (indicating how similar the clustering solutions are).</p></td>
-        <td><code>&#39;JaccardSimilarity&#39;</code></td>
-      </tr>
-      <tr>
-        <td><code>merging_threshold</code></td>
-        <td><code>float</code></td>
-        <td><p>Specifies the minimum required ratio (calculated from
+          <td>
+                <code>&#39;JaccardSimilarity&#39;</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>merging_threshold</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td><p>Specifies the minimum required ratio (calculated from
 the intersection between two sets over the size of the smaller set) for
 which the <code>consensus_function</code> should merge two sets. Only applies to
 <code>consensus_function_12</code>.</p></td>
-        <td><code>0.5</code></td>
-      </tr>
-      <tr>
-        <td><code>optimize_label_names</code></td>
-        <td><code>bool</code></td>
-        <td><p>Indicates whether the label assignment of
+          <td>
+                <code>0.5</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>optimize_label_names</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Indicates whether the label assignment of
 the clustering partitions should be optimized to maximize the similarity
 measure score (using the Hungarian algorithm). By default set to <code>False</code> as
 the default <code>similarity_measure</code> score (&ldquo;JaccardSimilarity&rdquo;) does not depend
 on which labels are assigned to which cluster.</p></td>
-        <td><code>False</code></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Attributes:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Attributes:</strong></p>
+  <table>
+    <thead>
       <tr>
-        <td><code>consensus_function</code></td>
-        <td><code>function</code></td>
-        <td><p>The consensus function used to generate clusters
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>consensus_function</code></td>
+          <td>
+                <code>function</code>
+          </td>
+          <td><p>The consensus function used to generate clusters
 from the available instance sets at each iteration.</p></td>
-      </tr>
-      <tr>
-        <td><code>consensus_vectors</code></td>
-        <td><code>list of numpy arrays</code></td>
-        <td><p>The list of proposed consensus
+        </tr>
+        <tr>
+          <td><code>consensus_vectors</code></td>
+          <td>
+                <code>list of numpy arrays</code>
+          </td>
+          <td><p>The list of proposed consensus
 clustering candidates.</p></td>
-      </tr>
-      <tr>
-        <td><code>decision_thresholds</code></td>
-        <td><code>list of int</code></td>
-        <td><p>The list of decision thresholds values,
+        </tr>
+        <tr>
+          <td><code>decision_thresholds</code></td>
+          <td>
+                <code>list of int</code>
+          </td>
+          <td><p>The list of decision thresholds values,
 corresponding to the consensus vectors (in the same order). A decision
 threshold indicates how many base clustering solutions were required to
 agree (at least) to form sub-clusters.</p></td>
-      </tr>
-      <tr>
-        <td><code>ensemble_similarity</code></td>
-        <td><code>list of float</code></td>
-        <td><p>The list of ensemble similarity measures
+        </tr>
+        <tr>
+          <td><code>ensemble_similarity</code></td>
+          <td>
+                <code>list of float</code>
+          </td>
+          <td><p>The list of ensemble similarity measures
 corresponding to the consensus vectors.</p></td>
-      </tr>
-      <tr>
-        <td><code>labels_</code></td>
-        <td><code>numpy array</code></td>
-        <td><p>The recommended consensus candidate.</p></td>
-      </tr>
-      <tr>
-        <td><code>optimize_label_names</code></td>
-        <td><code>bool</code></td>
-        <td><p>Indicates whether the label assignment of
+        </tr>
+        <tr>
+          <td><code>labels_</code></td>
+          <td>
+                <code>numpy array</code>
+          </td>
+          <td><p>The recommended consensus candidate.</p></td>
+        </tr>
+        <tr>
+          <td><code>optimize_label_names</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Indicates whether the label assignment of
 clustering partitions should be optimized or not.</p></td>
-      </tr>
-      <tr>
-        <td><code>recommended</code></td>
-        <td><code>int</code></td>
-        <td><p>The index of the recommended consensus vector.</p></td>
-      </tr>
-      <tr>
-        <td><code>similarity_measure</code></td>
-        <td><code>function</code></td>
-        <td><p>The similarity function used to measure the
+        </tr>
+        <tr>
+          <td><code>recommended</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td><p>The index of the recommended consensus vector.</p></td>
+        </tr>
+        <tr>
+          <td><code>similarity_measure</code></td>
+          <td>
+                <code>function</code>
+          </td>
+          <td><p>The similarity function used to measure the
 similarity between two clustering solutions.</p></td>
-      </tr>
-      <tr>
-        <td><code>stability</code></td>
-        <td><code>list of int</code></td>
-        <td><p>The list of stability values, corresponding to the
+        </tr>
+        <tr>
+          <td><code>stability</code></td>
+          <td>
+                <code>list of int</code>
+          </td>
+          <td><p>The list of stability values, corresponding to the
 consensus vectors (in the same order). A stability value indicates how many
 times the same consensus is generated for different decision thresholds.</p></td>
-      </tr>
-      <tr>
-        <td><code>tree_quality</code></td>
-        <td><code>float</code></td>
-        <td><p>The tree quality measure (between 0 and 1). Higher is
+        </tr>
+        <tr>
+          <td><code>tree_quality</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td><p>The tree quality measure (between 0 and 1). Higher is
 better.</p></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Exceptions:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Raises:</strong></p>
+  <table>
+    <thead>
       <tr>
-        <td><code>ValueError</code></td>
-        <td><p>If <code>consensus_function</code> or <code>similarity_measure</code> is not a function
-and not one of the allowed string values (mentioned above).</p></td>
+        <th>Type</th>
+        <th>Description</th>
       </tr>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code>ValueError</code>
+          </td>
+          <td><p>If <code>consensus_function</code> or <code>similarity_measure</code> is not a function
+and not one of the allowed string values (mentioned above).</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+
         <details class="quote">
           <summary>Source code in <code>multicons/core.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MultiCons</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">):</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 28</span>
+<span class="normal"> 29</span>
+<span class="normal"> 30</span>
+<span class="normal"> 31</span>
+<span class="normal"> 32</span>
+<span class="normal"> 33</span>
+<span class="normal"> 34</span>
+<span class="normal"> 35</span>
+<span class="normal"> 36</span>
+<span class="normal"> 37</span>
+<span class="normal"> 38</span>
+<span class="normal"> 39</span>
+<span class="normal"> 40</span>
+<span class="normal"> 41</span>
+<span class="normal"> 42</span>
+<span class="normal"> 43</span>
+<span class="normal"> 44</span>
+<span class="normal"> 45</span>
+<span class="normal"> 46</span>
+<span class="normal"> 47</span>
+<span class="normal"> 48</span>
+<span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MultiCons</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;MultiCons (Multiple Consensus) algorithm.</span>
 
 <span class="sd">    MultiCons is a consensus clustering method that uses the frequent closed itemset</span>
@@ -1194,10 +1583,10 @@ and not one of the allowed string values (mentioned above).</p></td>
                 <span class="sa">f</span><span class="s2">&quot;But received `</span><span class="si">{</span><span class="n">argument</span><span class="si">}</span><span class="s2">` instead.&quot;</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">value</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
         </details>
 
-
+  
 
   <div class="doc doc-children">
 
@@ -1209,26 +1598,58 @@ and not one of the allowed string values (mentioned above).</p></td>
 
 
 
-  <div class="doc doc-object doc-method">
+<div class="doc doc-object doc-function">
 
 
 
 <h3 id="multicons.core.MultiCons.__init__" class="doc doc-heading">
-<code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consensus_function</span><span class="o">=</span><span class="s1">&#39;consensus_function_10&#39;</span><span class="p">,</span> <span class="n">merging_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">similarity_measure</span><span class="o">=</span><span class="s1">&#39;JaccardSimilarity&#39;</span><span class="p">,</span> <span class="n">optimize_label_names</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-special"><code>special</code></small>
-  </span>
+<code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">consensus_function</span><span class="o">=</span><span class="s1">&#39;consensus_function_10&#39;</span><span class="p">,</span> <span class="n">merging_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">similarity_measure</span><span class="o">=</span><span class="s1">&#39;JaccardSimilarity&#39;</span><span class="p">,</span> <span class="n">optimize_label_names</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 </h3>
 
-    <div class="doc doc-contents ">
 
+  <div class="doc doc-contents ">
+  
       <p>Initializes MultiCons.</p>
 
-        <details class="quote">
-          <summary>Source code in <code>multicons/core.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+      <details class="quote">
+        <summary>Source code in <code>multicons/core.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">consensus_function</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
         <span class="n">Literal</span><span class="p">[</span>
@@ -1264,31 +1685,74 @@ and not one of the allowed string values (mentioned above).</p></td>
     <span class="bp">self</span><span class="o">.</span><span class="n">recommended</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">stability</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">tree_quality</span> <span class="o">=</span> <span class="kc">None</span>
-</code></pre></div>
-        </details>
-    </div>
-
+</code></pre></div></td></tr></table></div>
+      </details>
   </div>
 
+</div>
 
-
-  <div class="doc doc-object doc-method">
+<div class="doc doc-object doc-function">
 
 
 
 <h3 id="multicons.core.MultiCons.cons_tree" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">cons_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
-
+<code class="highlight language-python"><span class="n">cons_tree</span><span class="p">()</span></code>
 
 </h3>
 
-    <div class="doc doc-contents ">
 
+  <div class="doc doc-contents ">
+  
       <p>Returns a ConsTree graph. Requires the <code>fit</code> method to be called first.</p>
 
-        <details class="quote">
-          <summary>Source code in <code>multicons/core.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">cons_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">graphviz</span><span class="o">.</span><span class="n">Digraph</span><span class="p">:</span>
+      <details class="quote">
+        <summary>Source code in <code>multicons/core.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">cons_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">graphviz</span><span class="o">.</span><span class="n">Digraph</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Returns a ConsTree graph. Requires the `fit` method to be called first.&quot;&quot;&quot;</span>
 
     <span class="n">graph</span> <span class="o">=</span> <span class="n">graphviz</span><span class="o">.</span><span class="n">Digraph</span><span class="p">()</span>
@@ -1334,81 +1798,198 @@ and not one of the allowed string values (mentioned above).</p></td>
             <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">sub_graph</span><span class="o">.</span><span class="n">edge</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;legend_</span><span class="si">{</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;legend_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">graph</span>
-</code></pre></div>
-        </details>
-    </div>
-
+</code></pre></div></td></tr></table></div>
+      </details>
   </div>
 
+</div>
 
-
-  <div class="doc doc-object doc-method">
+<div class="doc doc-object doc-function">
 
 
 
 <h3 id="multicons.core.MultiCons.fit" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
-
+<code class="highlight language-python"><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h3>
 
-    <div class="doc doc-contents ">
 
+  <div class="doc doc-contents ">
+  
       <p>Computes the MultiCons consensus.</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
       <tr>
-        <td><code>X</code></td>
-        <td><code>list of numeric numpy arrays or a pandas Dataframe</code></td>
-        <td><p>Either a list of
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>X</code></td>
+          <td>
+                <code>list of numeric numpy arrays or a pandas Dataframe</code>
+          </td>
+          <td><p>Either a list of
 arrays where each array represents one clustering solution
 (base clusterings), or a Dataframe representing a binary membership
 matrix.</p></td>
-        <td><em>required</em></td>
-      </tr>
-      <tr>
-        <td><code>y</code></td>
-        <td></td>
-        <td><p>Ignored. Not used, present here for API consistency by convention.</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>sample_weight</code></td>
-        <td></td>
-        <td><p>Ignored. Not used, present here for API consistency by
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>y</code></td>
+          <td>
+          </td>
+          <td><p>Ignored. Not used, present here for API consistency by convention.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>sample_weight</code></td>
+          <td>
+          </td>
+          <td><p>Ignored. Not used, present here for API consistency by
 convention.</p></td>
-        <td><code>None</code></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
       </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>self</code></td>
-      <td><p>Returns the (fitted) instance itself.</p></td>
-    </tr>
-  </tbody>
-</table>
-        <details class="quote">
-          <summary>Source code in <code>multicons/core.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1"># pylint: disable=unused-argument</span>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>self</code></td>          <td>
+          </td>
+          <td><p>Returns the (fitted) instance itself.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>multicons/core.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1"># pylint: disable=unused-argument</span>
     <span class="sd">&quot;&quot;&quot;Computes the MultiCons consensus.</span>
 
 <span class="sd">    Args:</span>
@@ -1515,44 +2096,39 @@ convention.</p></td>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">ensemble_similarity</span> <span class="o">=</span> <span class="n">t_sim</span>
     <span class="k">return</span> <span class="bp">self</span>
-</code></pre></div>
-        </details>
-    </div>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
 
   </div>
 
-
-
-
-
   </div>
 
-    </div>
-
-  </div>
-
-<pre><code class="language-python">from multicons import (
+</div><pre><code class="language-python">from multicons import (
     build_membership_matrix, in_ensemble_similarity, linear_closed_itemsets_miner
 )
 </code></pre>
 
 
-  <div class="doc doc-object doc-module">
+<div class="doc doc-object doc-module">
 
 
 
 <h2 id="multicons.utils" class="doc doc-heading">
-        <code>multicons.utils</code>
-
+          <code>multicons.utils</code>
 
 
 </h2>
 
-    <div class="doc doc-contents first">
-
+  <div class="doc doc-contents first">
+  
       <p>Utility functions</p>
 
-
+  
 
   <div class="doc doc-children">
 
@@ -1563,23 +2139,33 @@ convention.</p></td>
 
 
 
-  <div class="doc doc-object doc-function">
+
+<div class="doc doc-object doc-function">
 
 
 
 <h3 id="multicons.utils.build_membership_matrix" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">build_membership_matrix</span><span class="p">(</span><span class="n">base_clusterings</span><span class="p">)</span></code>
 
-
 </h3>
 
-    <div class="doc doc-contents ">
 
+  <div class="doc doc-contents ">
+  
       <p>Computes and returns the membership matrix.</p>
 
-        <details class="quote">
-          <summary>Source code in <code>multicons/utils.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">build_membership_matrix</span><span class="p">(</span><span class="n">base_clusterings</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+      <details class="quote">
+        <summary>Source code in <code>multicons/utils.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">build_membership_matrix</span><span class="p">(</span><span class="n">base_clusterings</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Computes and returns the membership matrix.&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">base_clusterings</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base_clusterings</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
@@ -1589,31 +2175,48 @@ convention.</p></td>
     <span class="k">for</span> <span class="n">clusters</span> <span class="ow">in</span> <span class="n">base_clusterings</span><span class="p">:</span>
         <span class="n">res</span> <span class="o">+=</span> <span class="p">[</span><span class="n">clusters</span> <span class="o">==</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">clusters</span><span class="p">)]</span>
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">res</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-    </div>
-
+</code></pre></div></td></tr></table></div>
+      </details>
   </div>
 
+</div>
 
-
-  <div class="doc doc-object doc-function">
+<div class="doc doc-object doc-function">
 
 
 
 <h3 id="multicons.utils.in_ensemble_similarity" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">in_ensemble_similarity</span><span class="p">(</span><span class="n">base_clusterings</span><span class="p">)</span></code>
 
-
 </h3>
 
-    <div class="doc doc-contents ">
 
+  <div class="doc doc-contents ">
+  
       <p>Returns the average similarity among the base clusters using Jaccard score.</p>
 
-        <details class="quote">
-          <summary>Source code in <code>multicons/utils.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">in_ensemble_similarity</span><span class="p">(</span><span class="n">base_clusterings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+      <details class="quote">
+        <summary>Source code in <code>multicons/utils.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">in_ensemble_similarity</span><span class="p">(</span><span class="n">base_clusterings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Returns the average similarity among the base clusters using Jaccard score.&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">base_clusterings</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">base_clusterings</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
@@ -1633,31 +2236,36 @@ convention.</p></td>
 
     <span class="n">average_similarity</span><span class="p">[</span><span class="n">count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">similarity</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="n">count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">average_similarity</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-    </div>
-
+</code></pre></div></td></tr></table></div>
+      </details>
   </div>
 
+</div>
 
-
-  <div class="doc doc-object doc-function">
+<div class="doc doc-object doc-function">
 
 
 
 <h3 id="multicons.utils.linear_closed_itemsets_miner" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">linear_closed_itemsets_miner</span><span class="p">(</span><span class="n">membership_matrix</span><span class="p">)</span></code>
 
-
 </h3>
 
-    <div class="doc doc-contents ">
 
+  <div class="doc doc-contents ">
+  
       <p>Returns a list of frequent closed itemsets using the LCM algorithm.</p>
 
-        <details class="quote">
-          <summary>Source code in <code>multicons/utils.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">linear_closed_itemsets_miner</span><span class="p">(</span><span class="n">membership_matrix</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+      <details class="quote">
+        <summary>Source code in <code>multicons/utils.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">linear_closed_itemsets_miner</span><span class="p">(</span><span class="n">membership_matrix</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns a list of frequent closed itemsets using the LCM algorithm.&quot;&quot;&quot;</span>
 
     <span class="n">transactions</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1665,43 +2273,37 @@ convention.</p></td>
         <span class="n">transactions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">membership_matrix</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
     <span class="n">frequent_closed_itemsets</span> <span class="o">=</span> <span class="n">eclat</span><span class="p">(</span><span class="n">transactions</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">supp</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">algo</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">conf</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">frequent_closed_itemsets</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-    </div>
-
+</code></pre></div></td></tr></table></div>
+      </details>
   </div>
 
-
-
+</div>
 
 
 
   </div>
 
-    </div>
-
   </div>
 
-<pre><code class="language-python">from multicons import consensus_function_10
+</div><pre><code class="language-python">from multicons import consensus_function_10
 </code></pre>
 
 
-  <div class="doc doc-object doc-module">
+<div class="doc doc-object doc-module">
 
 
 
 <h2 id="multicons.consensus" class="doc doc-heading">
-        <code>multicons.consensus</code>
-
+          <code>multicons.consensus</code>
 
 
 </h2>
 
-    <div class="doc doc-contents first">
-
+  <div class="doc doc-contents first">
+  
       <p>Consensus functions definitions.</p>
 
-
+  
 
   <div class="doc doc-children">
 
@@ -1712,23 +2314,54 @@ convention.</p></td>
 
 
 
-  <div class="doc doc-object doc-function">
+
+<div class="doc doc-object doc-function">
 
 
 
 <h3 id="multicons.consensus.consensus_function_10" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">consensus_function_10</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">,</span> <span class="n">merging_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
-
 </h3>
 
-    <div class="doc doc-contents ">
 
+  <div class="doc doc-contents ">
+  
       <p>Returns a modified bi_clust (set of unique instance sets).</p>
 
-        <details class="quote">
-          <summary>Source code in <code>multicons/consensus.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">consensus_function_10</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">set</span><span class="p">],</span> <span class="n">merging_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+      <details class="quote">
+        <summary>Source code in <code>multicons/consensus.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">consensus_function_10</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">set</span><span class="p">],</span> <span class="n">merging_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns a modified bi_clust (set of unique instance sets).&quot;&quot;&quot;</span>
 
     <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1759,31 +2392,74 @@ convention.</p></td>
             <span class="n">i</span> <span class="o">-=</span> <span class="mi">1</span>
             <span class="k">break</span>
         <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-</code></pre></div>
-        </details>
-    </div>
-
+</code></pre></div></td></tr></table></div>
+      </details>
   </div>
 
+</div>
 
-
-  <div class="doc doc-object doc-function">
+<div class="doc doc-object doc-function">
 
 
 
 <h3 id="multicons.consensus.consensus_function_12" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">consensus_function_12</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">,</span> <span class="n">merging_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span></code>
 
-
 </h3>
 
-    <div class="doc doc-contents ">
 
+  <div class="doc doc-contents ">
+  
       <p>Returns a modified bi_clust (set of unique instance sets).</p>
 
-        <details class="quote">
-          <summary>Source code in <code>multicons/consensus.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">consensus_function_12</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">set</span><span class="p">],</span> <span class="n">merging_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
+      <details class="quote">
+        <summary>Source code in <code>multicons/consensus.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">consensus_function_12</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">set</span><span class="p">],</span> <span class="n">merging_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns a modified bi_clust (set of unique instance sets).&quot;&quot;&quot;</span>
 
     <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1829,31 +2505,89 @@ convention.</p></td>
             <span class="n">i</span> <span class="o">-=</span> <span class="mi">1</span>
             <span class="k">break</span>
         <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-</code></pre></div>
-        </details>
-    </div>
-
+</code></pre></div></td></tr></table></div>
+      </details>
   </div>
 
+</div>
 
-
-  <div class="doc doc-object doc-function">
+<div class="doc doc-object doc-function">
 
 
 
 <h3 id="multicons.consensus.consensus_function_13" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">consensus_function_13</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">,</span> <span class="n">merging_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span></code>
 
-
 </h3>
 
-    <div class="doc doc-contents ">
 
+  <div class="doc doc-contents ">
+  
       <p>Returns a modified bi_clust (set of unique instance sets).</p>
 
-        <details class="quote">
-          <summary>Source code in <code>multicons/consensus.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">consensus_function_13</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">set</span><span class="p">],</span> <span class="n">merging_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
+      <details class="quote">
+        <summary>Source code in <code>multicons/consensus.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">consensus_function_13</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">set</span><span class="p">],</span> <span class="n">merging_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns a modified bi_clust (set of unique instance sets).&quot;&quot;&quot;</span>
 
     <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1914,31 +2648,85 @@ convention.</p></td>
             <span class="n">bi_clust</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">bi_clust_i</span> <span class="o">-</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">best_intersection_ratio_j</span><span class="p">]</span>
             <span class="k">continue</span>
         <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-</code></pre></div>
-        </details>
-    </div>
-
+</code></pre></div></td></tr></table></div>
+      </details>
   </div>
 
+</div>
 
-
-  <div class="doc doc-object doc-function">
+<div class="doc doc-object doc-function">
 
 
 
 <h3 id="multicons.consensus.consensus_function_14" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">consensus_function_14</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">,</span> <span class="n">merging_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span></code>
 
-
 </h3>
 
-    <div class="doc doc-contents ">
 
+  <div class="doc doc-contents ">
+  
       <p>Returns a modified bi_clust (set of unique instance sets).</p>
 
-        <details class="quote">
-          <summary>Source code in <code>multicons/consensus.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">consensus_function_14</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">set</span><span class="p">],</span> <span class="n">merging_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
+      <details class="quote">
+        <summary>Source code in <code>multicons/consensus.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">consensus_function_14</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">set</span><span class="p">],</span> <span class="n">merging_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns a modified bi_clust (set of unique instance sets).&quot;&quot;&quot;</span>
 
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
@@ -1995,31 +2783,75 @@ convention.</p></td>
             <span class="n">bi_clust</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">bi_clust</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
             <span class="n">intersection_matrix</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">intersection_matrix</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</code></pre></div>
-        </details>
-    </div>
-
+</code></pre></div></td></tr></table></div>
+      </details>
   </div>
 
+</div>
 
-
-  <div class="doc doc-object doc-function">
+<div class="doc doc-object doc-function">
 
 
 
 <h3 id="multicons.consensus.consensus_function_15" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">consensus_function_15</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">,</span> <span class="n">merging_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span></code>
 
-
 </h3>
 
-    <div class="doc doc-contents ">
 
+  <div class="doc doc-contents ">
+  
       <p>Returns a modified bi_clust (set of unique instance sets).</p>
 
-        <details class="quote">
-          <summary>Source code in <code>multicons/consensus.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">consensus_function_15</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">set</span><span class="p">],</span> <span class="n">merging_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
+      <details class="quote">
+        <summary>Source code in <code>multicons/consensus.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">consensus_function_15</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">set</span><span class="p">],</span> <span class="n">merging_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns a modified bi_clust (set of unique instance sets).&quot;&quot;&quot;</span>
 
     <span class="n">_remove_subsets</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">)</span>
@@ -2066,25 +2898,23 @@ convention.</p></td>
             <span class="n">bi_clust</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">bi_clust_i</span> <span class="o">-</span> <span class="n">bi_clust_intersection</span>
 
     <span class="n">_remove_subsets</span><span class="p">(</span><span class="n">bi_clust</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-    </div>
-
+</code></pre></div></td></tr></table></div>
+      </details>
   </div>
 
-
-
+</div>
 
 
 
   </div>
 
-    </div>
-
   </div>
+
+</div>
 
               
             </article>
+            
           </div>
         </div>
         
@@ -2092,7 +2922,8 @@ convention.</p></td>
       
         <footer class="md-footer">
   
-    <nav class="md-footer__inner md-grid" aria-label="Footer">
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
         <a href=".." class="md-footer__link md-footer__link--prev" aria-label="Previous: Overview" rel="prev">
@@ -2147,10 +2978,10 @@ convention.</p></td>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.85cb4492.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.ed9748b7.min.js"></script>
+      <script src="../assets/javascripts/bundle.f758a944.min.js"></script>
       
     
   </body>
