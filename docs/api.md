@@ -5,8 +5,8 @@ from multicons import MultiCons
 ```
 
 ::: multicons.MultiCons
-    rendering:
-        show_root_heading: true
+    options:
+      show_root_heading: true
 
 ```python
 from multicons import (
@@ -15,12 +15,11 @@ from multicons import (
 ```
 
 ::: multicons.utils
-    selection:
-      members:
-        - build_membership_matrix
-        - in_ensemble_similarity
-        - linear_closed_itemsets_miner
-    rendering:
+    options:
+        members:
+            - build_membership_matrix
+            - in_ensemble_similarity
+            - linear_closed_itemsets_miner
         show_root_heading: true
 
 
@@ -29,5 +28,5 @@ from multicons import consensus_function_10
 ```
 
 ::: multicons.consensus
-    rendering:
+    options:
         show_root_heading: true

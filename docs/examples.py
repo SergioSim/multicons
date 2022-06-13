@@ -113,7 +113,7 @@ cassini_train_data.plot.scatter(
 
 # BIRCH
 birch = Birch(n_clusters=3, threshold=0.5)
-base_clusterings.append(birch.fit_predict(cassini_train_data))
+base_clusterings.append(birch.fit_predict(np.ascontiguousarray(cassini_train_data)))
 cassini_train_data.plot.scatter(
     title="BIRCH", ax=axes[2, 0], c=base_clusterings[-1], **common_kwargs
 )
