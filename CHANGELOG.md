@@ -8,9 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.2.0] - 2023-04-11
+
 ### Changed
 
-- Improve library usage of MultiCons by unpinning dependencies
+- Improve library usage of MultiCons by unpinning dependencies and using ranges instead
 
 ## [0.1.0] - 2022-05-18
 
@@ -18,5 +20,6 @@ and this project adheres to
 
 - Implement the MultiCons class
 
-[unreleased]: https://github.com/SergioSim/multicons/v0.1.0...master
+[unreleased]: https://github.com/SergioSim/multicons/v0.2.0...master
+[0.2.0]: https://github.com/SergioSim/multicons/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/SergioSim/multicons/compare/125c67d...v0.1.0
