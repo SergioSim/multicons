@@ -10,14 +10,7 @@ and this project adheres to
 
 ### Changed
 
-- Upgrade `numpy` to `1.22.4`
-- Upgrade `scikit-learn` to `1.1.1 `
-- Upgrade `jupyterlab` to `3.4.3 `
-- Upgrade `mkdocs-jupyter` to `0.21.0`
-- Upgrade `mkdocs-material` to `8.3.4 `
-- Upgrade `mkdocstrings` to `0.19.0`
-- Upgrade `pylint` to `2.14.1`
-- Upgrade `twine` to `4.0.1 `
+- Improve library usage of MultiCons by unpinning dependencies
 
 ## [0.1.0] - 2022-05-18
 
