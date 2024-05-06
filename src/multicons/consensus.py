@@ -2,6 +2,7 @@
 
 # pylint: disable=unused-argument
 
+import numpy as np
 import pandas as pd
 import scipy.sparse as sp
 
@@ -189,7 +190,7 @@ def consensus_function_14(bi_clust: list[set], merging_threshold: float = 0.5):
         if bi_clust_size == 1:
             return
         intersection_matrix = pd.DataFrame(
-            columns=range(bi_clust_size), index=range(bi_clust_size), dtype=int
+            columns=range(bi_clust_size), index=range(bi_clust_size), dtype=float
         )
 
         for i in range(bi_clust_size - 1):
@@ -221,22 +222,22 @@ def consensus_function_14(bi_clust: list[set], merging_threshold: float = 0.5):
             i = pointer.iloc[k, 0]
             j = pointer.iloc[k, 1]
             value = intersection_matrix.iloc[i, j]
-            if value is None:
+            if np.isnan(value):
                 continue
             if value >= merging_threshold:
                 bi_clust[i] = bi_clust[i].union(bi_clust[j])
                 bi_clust[j] = set()
-                intersection_matrix.iloc[i, :] = None
-                intersection_matrix.iloc[:, j] = None
+                intersection_matrix.iloc[i, :] = np.nan
+                intersection_matrix.iloc[:, j] = np.nan
                 continue
             if len(bi_clust[i]) <= len(bi_clust[j]):
                 bi_clust[j] = bi_clust[j] - bi_clust[i]
-                intersection_matrix.iloc[j, :] = None
-                intersection_matrix.iloc[:, j] = None
+                intersection_matrix.iloc[j, :] = np.nan
+                intersection_matrix.iloc[:, j] = np.nan
                 continue
             bi_clust[i] = bi_clust[i] - bi_clust[j]
-            intersection_matrix.iloc[i, :] = None
-            intersection_matrix.iloc[:, i] = None
+            intersection_matrix.iloc[i, :] = np.nan
+            intersection_matrix.iloc[:, i] = np.nan
 
 
 def consensus_function_15(bi_clust: list[set], merging_threshold: float = 0.5):
@@ -247,7 +248,7 @@ def consensus_function_15(bi_clust: list[set], merging_threshold: float = 0.5):
     if bi_clust_size == 1:
         return
     intersection_matrix = pd.DataFrame(
-        0, columns=range(bi_clust_size), index=range(bi_clust_size), dtype=int
+        0, columns=range(bi_clust_size), index=range(bi_clust_size), dtype=float
     )
     for i in range(bi_clust_size - 1):
         bi_clust_i = bi_clust[i]
