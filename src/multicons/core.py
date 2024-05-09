@@ -176,12 +176,12 @@ class MultiCons(BaseEstimator):
                 arrays where each array represents one clustering solution
                 (base clusterings), or a Dataframe representing a binary membership
                 matrix.
-            y: Ignored. Not used, present here for API consistency by convention.
-            sample_weight: Ignored. Not used, present here for API consistency by
+            y (any): Ignored. Not used, present here for API consistency by convention.
+            sample_weight (any): Ignored. Not used, present here for API consistency by
                 convention.
 
         Returns:
-            self: Returns the (fitted) instance itself.
+            self (MultiCons): Returns the (fitted) instance itself.
         """
 
         if isinstance(X, pd.DataFrame):
