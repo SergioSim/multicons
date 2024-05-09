@@ -1,5 +1,5 @@
 # -- Base image --
-FROM python:3.10-slim-bullseye as base
+FROM python:3.12-slim-bullseye as base
 
 RUN pip install --upgrade pip
 
@@ -16,9 +16,5 @@ WORKDIR /app
 COPY . /app/
 
 RUN pip install -e .[dev]
-
-RUN jupyter contrib nbextension install && \
-   jupyter nbextension install jupytext --py && \
-   jupyter nbextension enable jupytext --py
 
 USER ${DOCKER_USER:-1000}
