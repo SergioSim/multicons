@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.13.8
+#       jupytext_version: 1.16.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -38,6 +38,7 @@ from os import path
 import numpy as np
 import pandas as pd
 from fcmeans import FCM
+from kmedoids import KMedoids
 from matplotlib import pyplot as plt
 from sklearn.cluster import (
     DBSCAN,
@@ -47,7 +48,6 @@ from sklearn.cluster import (
     SpectralClustering,
 )
 from sklearn.mixture import GaussianMixture
-from sklearn_extra.cluster import KMedoids
 
 from multicons import MultiCons
 from multicons.utils import jaccard_similarity
@@ -106,7 +106,10 @@ cassini_train_data.plot.scatter(
 )
 
 # PAM
-base_clusterings.append(KMedoids(n_clusters=3).fit_predict(cassini_train_data))
+base_clusterings.append(
+    KMedoids(3, metric="euclidean", method="pam")
+    .fit_predict(cassini_train_data.to_numpy())
+)
 cassini_train_data.plot.scatter(
     title="PAM", ax=axes[1, 2], c=base_clusterings[-1], **common_kwargs
 )
@@ -320,7 +323,10 @@ gaussian_train_data.plot.scatter(
 )
 
 # PAM (3 clusters)
-base_clusterings.append(KMedoids(n_clusters=3).fit_predict(gaussian_train_data))
+base_clusterings.append(
+    KMedoids(3, metric="euclidean", method="pam")
+    .fit_predict(gaussian_train_data.to_numpy())
+)
 gaussian_train_data.plot.scatter(
     title="PAM (3 clusters)", ax=axes[2, 0], c=base_clusterings[-1], **common_kwargs
 )
