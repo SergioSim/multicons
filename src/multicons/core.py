@@ -80,8 +80,9 @@ class MultiCons(BaseEstimator):
             numeric score (indicating how similar the clustering solutions are).
         merging_threshold (float): Specifies the minimum required ratio (calculated from
             the intersection between two sets over the size of the smaller set) for
-            which the `consensus_function` should merge two sets. Only applies to
-            `consensus_function_12`.
+            which the `consensus_function` should merge two sets. Applies to
+            `consensus_function_12`, `consensus_function_13`, `consensus_function_14`
+            and `consensus_function_15`.
         optimize_label_names (bool): Indicates whether the label assignment of
             the clustering partitions should be optimized to maximize the similarity
             measure score (using the Hungarian algorithm). By default set to `False` as
