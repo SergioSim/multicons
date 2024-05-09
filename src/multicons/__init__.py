@@ -16,4 +16,4 @@ from multicons.utils import (
     linear_closed_itemsets_miner,
 )
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"

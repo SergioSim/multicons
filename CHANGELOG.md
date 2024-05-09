@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.3.0] - 2024-05-09
+
+## Fixed
+
+- Fix incompatible dtype warning
+
 ## [0.2.0] - 2023-04-11
 
 ### Changed
@@ -20,6 +26,7 @@ and this project adheres to
 
 - Implement the MultiCons class
 
-[unreleased]: https://github.com/SergioSim/multicons/compare/v0.2.0...master
+[unreleased]: https://github.com/SergioSim/multicons/compare/v0.3.0...master
+[0.3.0]: https://github.com/SergioSim/multicons/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/SergioSim/multicons/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/SergioSim/multicons/compare/125c67d...v0.1.0
